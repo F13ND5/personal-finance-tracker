@@ -4,7 +4,7 @@ import {
   getGoals,
   addGoal,
   deleteGoal,
-  updateGoal
+  updateGoal,
 } from "../services/firestoreService";
 import {
   Button,
@@ -21,12 +21,16 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  IconButton
+  IconButton,
+  ToggleButton,
+  Tooltip,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MuiAlert from "@mui/material/Alert";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import { useNavigate } from "react-router-dom";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -35,7 +39,11 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const Goals = ({ userId }) => {
   const [goals, setGoals] = useState([]);
-  const [newGoal, setNewGoal] = useState({ amount: "", title: "" });
+  const [newGoal, setNewGoal] = useState({
+    amount: "",
+    title: "",
+    isAchieved: false,
+  });
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -59,13 +67,21 @@ const Goals = ({ userId }) => {
 
   const handleAddGoal = async (e) => {
     e.preventDefault();
-    await addGoal(userId, { ...newGoal, date: new Date() });
+    await addGoal(userId, { ...newGoal, isAchieved: false, date: new Date() });
     setSnackbarMessage("Goal added successfully!");
     setSnackbarOpen(true);
     setAddDialogOpen(false);
     const updatedGoals = await getGoals(userId);
     setGoals(updatedGoals);
-    setNewGoal({ title: "", target: "" });
+    setNewGoal({ title: "", target: "", isAchieved: false });
+  };
+
+  const handleToggleAchieved = async (goal) => {
+    const updatedGoal = { ...goal, isAchieved: !goal.isAchieved };
+    await updateGoal(userId, goal.id, updatedGoal);
+    setGoals((prevGoals) =>
+      prevGoals.map((g) => (g.id === goal.id ? updatedGoal : g))
+    );
   };
 
   const handleUpdateGoal = async () => {
@@ -194,7 +210,11 @@ const Goals = ({ userId }) => {
             <Button onClick={handleUpdateDialogClose} color="secondary">
               Cancel
             </Button>
-            <Button onClick={handleUpdateGoal} variant="contained" color="primary">
+            <Button
+              onClick={handleUpdateGoal}
+              variant="contained"
+              color="primary"
+            >
               Update Goal
             </Button>
           </DialogActions>
@@ -239,14 +259,40 @@ const Goals = ({ userId }) => {
                   (e.currentTarget.style.transform = "scale(1)")
                 }
               >
-                <CardContent>
-                  <Typography variant="h6" style={{ color: "#1E88E5" }}>
+                <CardContent
+                  style={{
+                    backgroundColor: "#f5f5f5",
+                    borderRadius: "8px",
+                    padding: "16px",
+                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    style={{ color: "#1E88E5", fontWeight: 600 }}
+                  >
                     {goal.title}
                   </Typography>
-                  <Typography variant="body1" style={{ margin: "8px 0" }}>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      margin: "8px 0",
+                      fontSize: "16px",
+                      display: "flex",
+                      alignItems: "center",
+                      color: "#424242",
+                    }}
+                  >
                     <strong>Target:</strong> ${goal.target}
                   </Typography>
-                  <Typography variant="body2" color="textSecondary">
+                  <Typography
+                    variant="body2"
+                    style={{
+                      color: "#757575",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
                     <strong>Date:</strong>{" "}
                     {new Date(goal.date.seconds * 1000).toLocaleDateString()}
                   </Typography>
@@ -256,23 +302,100 @@ const Goals = ({ userId }) => {
                   style={{
                     display: "flex",
                     justifyContent: "flex-end",
-                    paddingTop: 0,
+                    alignItems: "center",
+                    paddingTop: "8px",
                   }}
                 >
-                  <IconButton
-                    aria-label="edit"
-                    color="primary"
-                    onClick={() => handleUpdateDialogOpen(goal)}
+                  <Tooltip
+                    title={
+                      goal.isAchieved
+                        ? "Mark as Not Achieved"
+                        : "Mark as Achieved"
+                    }
                   >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    aria-label="delete"
-                    color="secondary"
-                    onClick={() => handleDeleteGoal(goal.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                    <ToggleButton
+                      value="check"
+                      selected={goal.isAchieved}
+                      onChange={() => handleToggleAchieved(goal)}
+                      style={{
+                        padding: 4,
+                        borderRadius: "50%",
+                        backgroundColor: goal.isAchieved
+                          ? "#e0ffe0"
+                          : "transparent",
+                        transition: "all 0.3s ease",
+                        boxShadow: goal.isAchieved
+                          ? "0px 4px 10px rgba(0, 128, 0, 0.3)"
+                          : "none",
+                      }}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: goal.isAchieved
+                            ? "#ccffcc"
+                            : "#f0f0f0",
+                          transform: "scale(1.1)",
+                        },
+                      }}
+                    >
+                      {goal.isAchieved ? (
+                        <CheckCircleIcon color="success" fontSize="large" />
+                      ) : (
+                        <RadioButtonUncheckedIcon
+                          color="disabled"
+                          fontSize="large"
+                        />
+                      )}
+                    </ToggleButton>
+                  </Tooltip>
+
+                  <Tooltip title="Update Goal">
+                    <IconButton
+                      aria-label="edit"
+                      color="primary"
+                      onClick={() => handleUpdateDialogOpen(goal)}
+                      style={{
+                        padding: 8,
+                        borderRadius: "50%",
+                        margin: "0 8px",
+                        backgroundColor: "#e3f2fd",
+                        transition: "all 0.3s ease",
+                        boxShadow: "0px 4px 10px rgba(33, 150, 243, 0.3)",
+                      }}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "#bbdefb",
+                          transform: "scale(1.1)",
+                          boxShadow: "0px 6px 15px rgba(33, 150, 243, 0.5)",
+                        },
+                      }}
+                    >
+                      <EditIcon fontSize="medium" />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title="Delete Goal">
+                    <IconButton
+                      aria-label="delete"
+                      color="secondary"
+                      onClick={() => handleDeleteGoal(goal.id)}
+                      style={{
+                        padding: 8,
+                        borderRadius: "50%",
+                        backgroundColor: "#ffebee",
+                        transition: "all 0.3s ease",
+                        boxShadow: "0px 4px 10px rgba(244, 67, 54, 0.3)",
+                      }}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "#ffcdd2",
+                          transform: "scale(1.1)",
+                          boxShadow: "0px 6px 15px rgba(244, 67, 54, 0.5)",
+                        },
+                      }}
+                    >
+                      <DeleteIcon fontSize="medium" />
+                    </IconButton>
+                  </Tooltip>
                 </CardContent>
               </Card>
             </Grid2>

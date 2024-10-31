@@ -69,6 +69,13 @@ export const getGoals = async (userId) => {
   return goalsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
 
+// Get all achieved goals for a user
+export const getAchievedGoals = async (userId) => {
+  const goalsSnapshot = await getDocs(collection(db, "users", userId, "goals"));
+  const achievedGoals = goalsSnapshot.docs.filter((doc) => doc.data().isAchieved);
+  return achievedGoals.map((doc) => ({ id: doc.id, ...doc.data() }));
+};
+
 // Update a goal
 export const updateGoal = async (userId, goalId, updatedData) => {
   const expenseRef = doc(db, "users", userId, "goals", goalId);

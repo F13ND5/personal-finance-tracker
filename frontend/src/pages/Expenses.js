@@ -22,6 +22,7 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -247,14 +248,40 @@ const Expenses = ({ userId }) => {
                   (e.currentTarget.style.transform = "scale(1)")
                 }
               >
-                <CardContent>
-                  <Typography variant="h6" style={{ color: "#1E88E5" }}>
+                <CardContent
+                  style={{
+                    backgroundColor: "#f5f5f5",
+                    borderRadius: "8px",
+                    padding: "16px",
+                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    style={{ color: "#1E88E5", fontWeight: 600 }}
+                  >
                     {expense.category}
                   </Typography>
-                  <Typography variant="body1" style={{ margin: "8px 0" }}>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      margin: "8px 0",
+                      fontSize: "16px",
+                      display: "flex",
+                      alignItems: "center",
+                      color: "#424242",
+                    }}
+                  >
                     <strong>Amount:</strong> ${expense.amount}
                   </Typography>
-                  <Typography variant="body2" color="textSecondary">
+                  <Typography
+                    variant="body2"
+                    style={{
+                      color: "#757575",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
                     <strong>Date:</strong>{" "}
                     {new Date(expense.date.seconds * 1000).toLocaleDateString()}
                   </Typography>
@@ -264,23 +291,58 @@ const Expenses = ({ userId }) => {
                   style={{
                     display: "flex",
                     justifyContent: "flex-end",
-                    paddingTop: 0,
+                    alignItems: "center",
+                    paddingTop: "8px",
                   }}
                 >
-                  <IconButton
-                    aria-label="edit"
-                    color="primary"
-                    onClick={() => handleUpdateDialogOpen(expense)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    aria-label="delete"
-                    color="secondary"
-                    onClick={() => handleDeleteExpense(expense.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <Tooltip title="Update Expense">
+                    <IconButton
+                      aria-label="edit"
+                      color="primary"
+                      onClick={() => handleUpdateDialogOpen(expense)}
+                      style={{
+                        padding: 8,
+                        borderRadius: "50%",
+                        margin: "0 8px",
+                        backgroundColor: "#e3f2fd",
+                        transition: "all 0.3s ease",
+                        boxShadow: "0px 4px 10px rgba(33, 150, 243, 0.3)",
+                      }}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "#bbdefb",
+                          transform: "scale(1.1)",
+                          boxShadow: "0px 6px 15px rgba(33, 150, 243, 0.5)",
+                        },
+                      }}
+                    >
+                      <EditIcon fontSize="medium" />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title="Delete Expense">
+                    <IconButton
+                      aria-label="delete"
+                      color="secondary"
+                      onClick={() => handleDeleteExpense(expense.id)}
+                      style={{
+                        padding: 8,
+                        borderRadius: "50%",
+                        backgroundColor: "#ffebee",
+                        transition: "all 0.3s ease",
+                        boxShadow: "0px 4px 10px rgba(244, 67, 54, 0.3)",
+                      }}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "#ffcdd2",
+                          transform: "scale(1.1)",
+                          boxShadow: "0px 6px 15px rgba(244, 67, 54, 0.5)",
+                        },
+                      }}
+                    >
+                      <DeleteIcon fontSize="medium" />
+                    </IconButton>
+                  </Tooltip>
                 </CardContent>
               </Card>
             </Grid2>

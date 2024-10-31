@@ -1,15 +1,16 @@
 // src/App.js
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebaseConfig.js'; 
-import Navbar from './components/AppBar';
-import Expenses from './pages/Expenses';
-import Goals from './pages/Goals';
-import Budgets from './pages/Budgets';
-import UserProfile from './pages/UserProfile';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebaseConfig.js";
+import Navbar from "./components/AppBar";
+import Expenses from "./pages/Expenses";
+import Goals from "./pages/Goals";
+import Budgets from "./pages/Budgets";
+import UserProfile from "./pages/UserProfile";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   const [userId, setUserId] = useState(null);
@@ -29,9 +30,9 @@ const App = () => {
   return (
     <Router>
       <Navbar />
-      <div style={{ padding: '20px' }}>
+      <div style={{ padding: "20px" }}>
         <Routes>
-          <Route path="/" element={<h1>Welcome to Personal Finance Tracker</h1>} />
+          <Route path="/" element={<Dashboard userId={userId} />} />
           <Route path="/expenses" element={<Expenses userId={userId} />} />
           <Route path="/goals" element={<Goals userId={userId} />} />
           <Route path="/budgets" element={<Budgets userId={userId} />} />
