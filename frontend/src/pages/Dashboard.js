@@ -8,6 +8,7 @@ import {
   Grid,
   Tooltip,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { MoneyOff, Assessment, PieChart, Receipt } from "@mui/icons-material"; // Example icons
 import ExpenseSummaryCard from "../components/ExpenseSummaryCard";
 import GoalProgressChart from "../components/GoalProgressChart";
@@ -20,7 +21,21 @@ import {
   getAchievedGoals,
 } from "../services/firestoreService";
 
+const boxStyles = (isLightMode, theme) => ({
+  borderRadius: 2,
+  boxShadow: 3,
+  p: 3,
+  bgcolor: isLightMode ? theme.palette.grey[100] : theme.palette.grey[900],
+  transition: "0.3s",
+  "&:hover": {
+    boxShadow: 6,
+  },
+  cursor: "pointer",
+});
+
 const Dashboard = ({ userId }) => {
+  const theme = useTheme();
+  const isLightMode = theme.palette.mode === "light";
   const [expenses, setExpenses] = useState([]);
   const [budgets, setBudgets] = useState([]);
   const [goals, setGoals] = useState([]);
@@ -32,9 +47,17 @@ const Dashboard = ({ userId }) => {
     setLoading(true);
 
     try {
-      const [fetchedExpenses, fetchedBudgets, fetchedGoals, fetchedAchievedGoals] = await Promise.all(
-        [getExpenses(userId), getBudgets(userId), getGoals(userId), getAchievedGoals(userId)]
-      );
+      const [
+        fetchedExpenses,
+        fetchedBudgets,
+        fetchedGoals,
+        fetchedAchievedGoals,
+      ] = await Promise.all([
+        getExpenses(userId),
+        getBudgets(userId),
+        getGoals(userId),
+        getAchievedGoals(userId),
+      ]);
 
       setExpenses(fetchedExpenses);
       setBudgets(fetchedBudgets);
@@ -67,16 +90,18 @@ const Dashboard = ({ userId }) => {
   const remainingBudget = totalBudget - totalExpenses;
 
   return (
-    <Container>
+    <Container
+      maxWidth="lg"
+      sx={{ padding: 3, bgcolor: theme.palette.background.default }}
+    >
       <Box
         display="flex"
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
         marginBottom={4}
-        style={{ textAlign: "center" }}
       >
-        <Typography variant="h3" gutterBottom>
+        <Typography variant="h3" fontWeight="bold" color="primary" gutterBottom>
           Welcome to Your Dashboard
         </Typography>
         <Typography variant="subtitle1" color="textSecondary">
@@ -91,40 +116,58 @@ const Dashboard = ({ userId }) => {
           alignItems="center"
           minHeight="50vh"
         >
-          <CircularProgress size={50} />
+          <CircularProgress size={60} thickness={4} color="secondary" />
         </Box>
       ) : (
         <>
-          <Box display="flex" justifyContent="space-between" mb={4}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            mb={4}
+            p={1}
+            bgcolor={isLightMode ? "#f0f0f0" : theme.palette.grey[800]}
+            borderRadius={1}
+            boxShadow={1}
+          >
             <Tooltip title="Total Expenses" arrow>
-              <Typography variant="h6" style={{ flex: 1, textAlign: "center" }}>
-                Total Expenses: ${totalExpenses.toFixed(2)}
+              <Typography
+                variant="h6"
+                sx={{ textAlign: "center", fontWeight: 500 }}
+              >
+                Total Expenses:{" "}
+                <span style={{ color: theme.palette.error.main }}>
+                  ${totalExpenses.toFixed(2)}
+                </span>
               </Typography>
             </Tooltip>
             <Tooltip title="Total Budget" arrow>
-              <Typography variant="h6" style={{ flex: 1, textAlign: "center" }}>
-                Total Budget: ${totalBudget.toFixed(2)}
+              <Typography
+                variant="h6"
+                sx={{ textAlign: "center", fontWeight: 500 }}
+              >
+                Total Budget:{" "}
+                <span style={{ color: theme.palette.success.main }}>
+                  ${totalBudget.toFixed(2)}
+                </span>
               </Typography>
             </Tooltip>
             <Tooltip title="Remaining Budget" arrow>
-              <Typography variant="h6" style={{ flex: 1, textAlign: "center" }}>
-                Remaining Budget: ${remainingBudget.toFixed(2)}
+              <Typography
+                variant="h6"
+                sx={{ textAlign: "center", fontWeight: 500 }}
+              >
+                Remaining Budget:{" "}
+                <span style={{ color: theme.palette.info.main }}>
+                  ${remainingBudget.toFixed(2)}
+                </span>
               </Typography>
             </Tooltip>
           </Box>
 
-          <Grid container spacing={4}>
+          <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
-              <Box
-                borderRadius={2}
-                boxShadow={3}
-                p={3}
-                bgcolor="#fafafa"
-                transition="0.3s"
-                _hover={{ boxShadow: 6 }}
-                style={{ cursor: "pointer" }}
-              >
-                <Typography variant="h6" gutterBottom>
+              <Box {...boxStyles(isLightMode, theme)}>
+                <Typography variant="h6" color="primary" gutterBottom>
                   <MoneyOff fontSize="small" /> Expense Summary
                 </Typography>
                 <ExpenseSummaryCard expenses={expenses} />
@@ -132,33 +175,17 @@ const Dashboard = ({ userId }) => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Box
-                borderRadius={2}
-                boxShadow={3}
-                p={3}
-                bgcolor="#e3f2fd"
-                transition="0.3s"
-                _hover={{ boxShadow: 6 }}
-                style={{ cursor: "pointer" }}
-              >
-                <Typography variant="h6" gutterBottom>
-                  <PieChart fontSize="small" /> Goal Progress
+              <Box {...boxStyles(isLightMode, theme)}>
+                <Typography variant="h6" color="primary" gutterBottom>
+                  <Receipt fontSize="small" /> Recent Transactions
                 </Typography>
-                <GoalProgressChart goalsAchieved={achievedGoals.length} totalGoals={goals.length} />
+                <RecentTransactions transactions={expenses} />
               </Box>
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Box
-                borderRadius={2}
-                boxShadow={3}
-                p={3}
-                bgcolor="#fff3e0"
-                transition="0.3s"
-                _hover={{ boxShadow: 6 }}
-                style={{ cursor: "pointer" }}
-              >
-                <Typography variant="h6" gutterBottom>
+              <Box {...boxStyles(isLightMode, theme)}>
+                <Typography variant="h6" color="primary" gutterBottom>
                   <Assessment fontSize="small" /> Budget Status
                 </Typography>
                 <BudgetStatus budgets={budgets} expenses={expenses} />
@@ -166,19 +193,14 @@ const Dashboard = ({ userId }) => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Box
-                borderRadius={2}
-                boxShadow={3}
-                p={3}
-                bgcolor="#ede7f6"
-                transition="0.3s"
-                _hover={{ boxShadow: 6 }}
-                style={{ cursor: "pointer" }}
-              >
-                <Typography variant="h6" gutterBottom>
-                  <Receipt fontSize="small" /> Recent Transactions
+              <Box {...boxStyles(isLightMode, theme)}>
+                <Typography variant="h6" color="primary" gutterBottom>
+                  <PieChart fontSize="small" /> Goal Progress
                 </Typography>
-                <RecentTransactions transactions={expenses} />
+                <GoalProgressChart
+                  goalsAchieved={achievedGoals.length}
+                  totalGoals={goals.length}
+                />
               </Box>
             </Grid>
           </Grid>

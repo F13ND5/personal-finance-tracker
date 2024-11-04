@@ -1,5 +1,5 @@
 // src/components/AppBar.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Avatar,
   AppBar,
@@ -10,6 +10,7 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
+import { Brightness4, Brightness7 } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
@@ -17,8 +18,10 @@ import { auth } from "../firebaseConfig.js";
 import { logOut } from "../services/authService";
 import { getUserProfile } from "../services/userService";
 import { useNavigate } from "react-router-dom";
+import { ThemeContext } from "../contexts/ThemeContext";
 
 const Navbar = () => {
+  const { themeMode, toggleTheme } = useContext(ThemeContext);
   const [userId, setUserId] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -132,6 +135,9 @@ const Navbar = () => {
             </Menu>
           </>
         )}
+        <IconButton onClick={toggleTheme} color="inherit">
+          {themeMode === "light" ? <Brightness4 /> : <Brightness7 />}
+        </IconButton>
       </Toolbar>
     </AppBar>
   );

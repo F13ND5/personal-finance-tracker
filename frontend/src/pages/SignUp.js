@@ -13,6 +13,7 @@ import {
   Fade,
   Grid,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import MuiAlert from "@mui/material/Alert";
 import dayjs from "dayjs";
 
@@ -21,6 +22,8 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 const SignUp = () => {
+  const theme = useTheme();
+  const isLightMode = theme.palette.mode === "light";
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -125,8 +128,28 @@ const SignUp = () => {
                   variant="outlined"
                   InputProps={{
                     style: {
-                      backgroundColor: "#fafafa",
+                      backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
+                      padding: "10px",
+                      transition:
+                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                      color: isLightMode ? "#000000" : "#F5F5F5",
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: isLightMode ? "#ccc" : "#888",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      },
+                      "&:focus-within fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        boxShadow: isLightMode
+                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
+                          : "0 0 5px rgba(187, 134, 252, 0.5)",
+                      }, // Focus effect
                     },
                   }}
                 />
@@ -142,8 +165,28 @@ const SignUp = () => {
                   variant="outlined"
                   InputProps={{
                     style: {
-                      backgroundColor: "#fafafa",
+                      backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
+                      padding: "10px",
+                      transition:
+                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                      color: isLightMode ? "#000000" : "#F5F5F5",
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: isLightMode ? "#ccc" : "#888",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      },
+                      "&:focus-within fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        boxShadow: isLightMode
+                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
+                          : "0 0 5px rgba(187, 134, 252, 0.5)",
+                      }, // Focus effect
                     },
                   }}
                 />
@@ -159,8 +202,28 @@ const SignUp = () => {
                   variant="outlined"
                   InputProps={{
                     style: {
-                      backgroundColor: "#fafafa",
+                      backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
+                      padding: "10px",
+                      transition:
+                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                      color: isLightMode ? "#000000" : "#F5F5F5",
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: isLightMode ? "#ccc" : "#888",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      },
+                      "&:focus-within fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        boxShadow: isLightMode
+                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
+                          : "0 0 5px rgba(187, 134, 252, 0.5)",
+                      }, // Focus effect
                     },
                   }}
                 />
@@ -178,8 +241,28 @@ const SignUp = () => {
                   variant="outlined"
                   InputProps={{
                     style: {
-                      backgroundColor: "#fafafa",
+                      backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
+                      padding: "10px",
+                      transition:
+                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                      color: isLightMode ? "#000000" : "#F5F5F5",
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: isLightMode ? "#ccc" : "#888",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      },
+                      "&:focus-within fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        boxShadow: isLightMode
+                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
+                          : "0 0 5px rgba(187, 134, 252, 0.5)",
+                      }, // Focus effect
                     },
                   }}
                 />
@@ -194,8 +277,28 @@ const SignUp = () => {
                   variant="outlined"
                   InputProps={{
                     style: {
-                      backgroundColor: "#fafafa",
+                      backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
+                      padding: "10px",
+                      transition:
+                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                      color: isLightMode ? "#000000" : "#F5F5F5",
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: isLightMode ? "#ccc" : "#888",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      },
+                      "&:focus-within fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        boxShadow: isLightMode
+                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
+                          : "0 0 5px rgba(187, 134, 252, 0.5)",
+                      }, // Focus effect
                     },
                   }}
                 />
@@ -210,8 +313,28 @@ const SignUp = () => {
                   variant="outlined"
                   InputProps={{
                     style: {
-                      backgroundColor: "#fafafa",
+                      backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
+                      padding: "10px",
+                      transition:
+                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                      color: isLightMode ? "#000000" : "#F5F5F5",
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: isLightMode ? "#ccc" : "#888",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      },
+                      "&:focus-within fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        boxShadow: isLightMode
+                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
+                          : "0 0 5px rgba(187, 134, 252, 0.5)",
+                      }, // Focus effect
                     },
                   }}
                 />
@@ -226,8 +349,28 @@ const SignUp = () => {
                   variant="outlined"
                   InputProps={{
                     style: {
-                      backgroundColor: "#fafafa",
+                      backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
+                      padding: "10px",
+                      transition:
+                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                      color: isLightMode ? "#000000" : "#F5F5F5",
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: isLightMode ? "#ccc" : "#888",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      },
+                      "&:focus-within fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        boxShadow: isLightMode
+                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
+                          : "0 0 5px rgba(187, 134, 252, 0.5)",
+                      }, // Focus effect
                     },
                   }}
                 />
@@ -250,8 +393,28 @@ const SignUp = () => {
                   }}
                   InputProps={{
                     style: {
-                      backgroundColor: "#fafafa",
+                      backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
+                      padding: "10px",
+                      transition:
+                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                      color: isLightMode ? "#000000" : "#F5F5F5",
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: isLightMode ? "#ccc" : "#888",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      },
+                      "&:focus-within fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        boxShadow: isLightMode
+                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
+                          : "0 0 5px rgba(187, 134, 252, 0.5)",
+                      }, // Focus effect
                     },
                   }}
                 />
@@ -269,11 +432,13 @@ const SignUp = () => {
                 fontSize: "1rem",
                 borderRadius: "8px",
                 transition: "background-color 0.3s ease, transform 0.2s ease",
+                backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32", // Green shades for light and dark mode
+                color: isLightMode ? "#ffffff" : "#E0E0E0", // Text color for readability
               }}
               disabled={loading}
               sx={{
                 "&:hover": {
-                  backgroundColor: "#3f51b5",
+                  backgroundColor: isLightMode ? "#388E3C" : "#1B5E20", // Slightly darker on hover
                   transform: "scale(1.05)",
                 },
               }}
@@ -305,7 +470,11 @@ const SignUp = () => {
           <Alert
             onClose={handleSnackbarClose}
             severity="error"
-            sx={{ width: "100%" }}
+            sx={{
+              width: "100%",
+              backgroundColor: theme.palette.success.main, // Use theme colors
+              color: theme.palette.getContrastText(theme.palette.success.main), // Ensure contrast
+            }}
           >
             {snackbarMessage}
           </Alert>

@@ -12,6 +12,7 @@ import {
   Grid2,
   IconButton,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import MuiAlert from "@mui/material/Alert";
 import EditIcon from "@mui/icons-material/Edit";
 import { getUserProfile, updateUserProfile } from "../services/userService"; // Service to manage user data
@@ -21,6 +22,8 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 const UserProfile = ({ userId }) => {
+  const theme = useTheme();
+  const isLightMode = theme.palette.mode === "light";
   const [userData, setUserData] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
   const [newImage, setNewImage] = useState(null);
@@ -67,7 +70,7 @@ const UserProfile = ({ userId }) => {
         const updatedUserData = { ...userData, profileImage: imagePreview };
         await updateUserProfile(userId, updatedUserData);
       } else {
-        await updateUserProfile(userId, userData); 
+        await updateUserProfile(userId, userData);
       }
       setSnackbarMessage("Profile updated successfully!");
       setSnackbarOpen(true);
@@ -85,23 +88,48 @@ const UserProfile = ({ userId }) => {
 
   const handleCancelEdit = () => {
     setEditMode(false);
-    setImagePreview(userData.profileImage); 
+    setImagePreview(userData.profileImage);
     setNewImage(null);
   };
 
   const handleSnackbarClose = () => setSnackbarOpen(false);
 
+  const isUserDataFullNameValid =
+    userData?.fullName !== "" && userData?.fullName !== null;
+  const isUserDataPhoneNumberValid =
+    userData?.phoneNumber !== "" && userData?.phoneNumber !== null;
+  const isUserDataAddressValid =
+    userData?.address !== "" && userData?.address !== null;
+  const isUserDataBtnDisable =
+    !isUserDataFullNameValid || !isUserDataPhoneNumberValid || !isUserDataAddressValid;
+
   return (
     <Container maxWidth="sm">
-      <Paper style={{ padding: "30px", marginTop: "20px", textAlign: "center" }}>
+      <Paper
+        style={{ padding: "30px", marginTop: "20px", textAlign: "center" }}
+      >
         {loading && (
-          <CircularProgress size={40} style={{ display: "block", margin: "20px auto" }} />
+          <CircularProgress
+            size={40}
+            style={{ display: "block", margin: "20px auto" }}
+          />
         )}
         <Typography variant="h4" gutterBottom>
           Update Profile
         </Typography>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "20px" }}>
-          <Avatar src={imagePreview} alt="Profile Picture" style={{ width: 120, height: 120, marginRight: 16 }} />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "20px",
+          }}
+        >
+          <Avatar
+            src={imagePreview}
+            alt="Profile Picture"
+            style={{ width: 120, height: 120, marginRight: 16 }}
+          />
           {editMode && (
             <>
               <input
@@ -122,8 +150,12 @@ const UserProfile = ({ userId }) => {
                     transition: "background-color 0.3s",
                     marginLeft: -20,
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#f0f0f0")}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#e0e0e0")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#f0f0f0")
+                  }
                 >
                   <EditIcon fontSize="large" style={{ color: "#00796b" }} />
                 </IconButton>
@@ -204,20 +236,50 @@ const UserProfile = ({ userId }) => {
                     type="submit"
                     variant="contained"
                     color="primary"
-                    fullWidth
-                    style={{ margin: "20px 0" }}
+                    sx={{
+                      padding: "10px 20px",
+                      borderRadius: "8px",
+                      fontWeight: 600,
+                      transition:
+                        "background-color 0.3s ease, transform 0.2s ease",
+                      backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32", // Green shades for light and dark mode
+                      color: isLightMode ? "#ffffff" : "#E0E0E0", // Text color for readability
+                      "&:hover": {
+                        backgroundColor: isLightMode ? "#388E3C" : "#1B5E20", // Slightly darker on hover
+                        transform: "scale(1.05)",
+                      },
+                      "&.Mui-disabled": {
+                        backgroundColor: isLightMode
+                          ? "none"
+                          : theme.palette.grey[300],
+                        color: theme.palette.grey[500],
+                      },
+                    }}
                     onClick={handleSave}
-                    disabled={loading}
+                    disabled={isUserDataBtnDisable || loading}
                   >
                     {loading ? <CircularProgress size={24} /> : "Save Changes"}
                   </Button>
                 </Grid2>
                 <Grid2 item xs>
                   <Button
+                    color="error"
                     variant="outlined"
-                    color="secondary"
-                    fullWidth
-                    style={{ margin: "20px 0" }}
+                    style={{
+                      padding: "10px 20px",
+                      borderRadius: "8px",
+                      fontWeight: 600,
+                      transition:
+                        "background-color 0.3s ease, transform 0.2s ease", // Transition for button
+                    }}
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: isLightMode
+                          ? "#ffebee"
+                          : theme.palette.error.light,
+                        transform: "scale(1.05)",
+                      },
+                    }}
                     onClick={handleCancelEdit}
                   >
                     Cancel
@@ -229,8 +291,20 @@ const UserProfile = ({ userId }) => {
         )}
       </Paper>
 
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity="success">
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success"
+          sx={{
+            width: "100%",
+            backgroundColor: theme.palette.success.main, // Use theme colors
+            color: theme.palette.getContrastText(theme.palette.success.main), // Ensure contrast
+          }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>

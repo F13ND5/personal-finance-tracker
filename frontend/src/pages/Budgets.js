@@ -26,6 +26,7 @@ import {
   Fade,
   Grow,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -37,6 +38,8 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 const Budgets = ({ userId }) => {
+  const theme = useTheme();
+  const isLightMode = theme.palette.mode === "light";
   const [budgets, setBudgets] = useState([]);
   const [newBudget, setNewBudget] = useState({ amount: "", category: "" });
   const [selectedBudget, setSelectedBudget] = useState(null);
@@ -102,13 +105,19 @@ const Budgets = ({ userId }) => {
   const handleUpdateDialogClose = () => setUpdateDialogOpen(false);
   const handleSnackbarClose = () => setSnackbarOpen(false);
 
-  const isNewBudgetCategoryValid = newBudget.category !== "" && newBudget.category !== null;
-  const isNewBudgetAmountValid = newBudget.amount !== "" && newBudget.amount !== null;
-  const isNewBudgetBtnDisable = !isNewBudgetCategoryValid || !isNewBudgetAmountValid;
+  const isNewBudgetCategoryValid =
+    newBudget.category !== "" && newBudget.category !== null;
+  const isNewBudgetAmountValid =
+    newBudget.amount !== "" && newBudget.amount !== null;
+  const isNewBudgetBtnDisable =
+    !isNewBudgetCategoryValid || !isNewBudgetAmountValid;
 
-  const isSelectedBudgetCategoryValid = selectedBudget?.category !== "" && selectedBudget?.category !== null;
-  const isSelectedBudgetAmountValid = selectedBudget?.amount !== "" && selectedBudget?.amount !== null;
-  const isSelectedBudgetBtnDisable = !isSelectedBudgetCategoryValid || !isSelectedBudgetAmountValid;
+  const isSelectedBudgetCategoryValid =
+    selectedBudget?.category !== "" && selectedBudget?.category !== null;
+  const isSelectedBudgetAmountValid =
+    selectedBudget?.amount !== "" && selectedBudget?.amount !== null;
+  const isSelectedBudgetBtnDisable =
+    !isSelectedBudgetCategoryValid || !isSelectedBudgetAmountValid;
 
   if (loading) return <CircularProgress />;
 
@@ -121,11 +130,38 @@ const Budgets = ({ userId }) => {
           position: "fixed",
           top: "100px",
           right: "20px",
-          backgroundColor: "#4CAF50",
-          color: "#fff",
+          /*backgroundColor: isLightMode ? "#4CAF50" : theme.palette.success.main,
+          color: theme.palette.getContrastText(
+            isLightMode ? "#fff" : theme.palette.success.main
+          ),*/
+          backgroundColor: isLightMode
+            ? "#4CAF50"
+            : theme.palette.background.default,
+          transition: "all 0.3s ease",
+          boxShadow: isLightMode
+            ? "0px 4px 10px rgba(33, 150, 243, 0.3)"
+            : `0px 4px 10px ${theme.palette.primary.main}80`,
+        }}
+        sx={{
+          "&:hover": {
+            backgroundColor: isLightMode
+              ? "#bbdefb"
+              : theme.palette.primary.light,
+            transform: "scale(1.1)",
+            boxShadow: isLightMode
+              ? "0px 6px 15px rgba(33, 150, 243, 0.5)"
+              : `0px 6px 15px ${theme.palette.primary.main}120`,
+          },
         }}
       >
-        <AddIcon />
+        <AddIcon
+          fontSize="medium"
+          style={{
+            color: isLightMode
+              ? theme.palette.common.white
+              : theme.palette.success.light,
+          }}
+        />
       </IconButton>
 
       <Dialog
@@ -134,7 +170,10 @@ const Budgets = ({ userId }) => {
         PaperProps={{
           style: {
             borderRadius: "12px",
-            boxShadow: "0px 8px 30px rgba(0, 0, 0, 0.2)",
+            boxShadow: isLightMode
+              ? "0px 8px 30px rgba(0, 0, 0, 0.2)" // Subtle shadow for light mode
+              : "0px 8px 30px rgba(0, 0, 0, 0.5)", // Stronger shadow for dark mode
+            backgroundColor: isLightMode ? "#fff" : "#333", // Adjust background for dark mode
           },
         }}
         fullWidth
@@ -144,10 +183,15 @@ const Budgets = ({ userId }) => {
           <Paper
             style={{
               padding: "40px",
-              backgroundColor: "#f9f9f9",
+              backgroundColor: isLightMode ? "#f9f9f9" : "#424242", // Light gray for light mode, dark gray for dark mode
               borderRadius: "12px",
-              transition: "all 0.3s ease", // Added transition for paper
+              color: isLightMode ? "#424242" : "#E0E0E0", // Text color for readability
+              transition: "all 0.3s ease", // Smooth transition for theme switching
+              boxShadow: isLightMode
+                ? "0px 4px 8px rgba(0, 0, 0, 0.1)" // Light shadow for light mode
+                : "0px 4px 12px rgba(0, 0, 0, 0.3)", // Darker, deeper shadow for dark mode
             }}
+            elevation={isLightMode ? 2 : 5}
           >
             <DialogTitle
               style={{
@@ -181,20 +225,27 @@ const Budgets = ({ userId }) => {
                   autoFocus
                   InputProps={{
                     style: {
-                      backgroundColor: "#ffffff",
+                      backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
                       padding: "10px",
                       transition:
                         "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                      color: isLightMode ? "#000000" : "#F5F5F5",
                     },
                   }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
-                      "& fieldset": { borderColor: "#ccc" },
-                      "&:hover fieldset": { borderColor: "#3f51b5" },
+                      "& fieldset": {
+                        borderColor: isLightMode ? "#ccc" : "#888",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      },
                       "&:focus-within fieldset": {
-                        borderColor: "#3f51b5",
-                        boxShadow: "0 0 5px rgba(63, 81, 181, 0.5)",
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        boxShadow: isLightMode
+                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
+                          : "0 0 5px rgba(187, 134, 252, 0.5)",
                       }, // Focus effect
                     },
                   }}
@@ -212,21 +263,28 @@ const Budgets = ({ userId }) => {
                   variant="outlined"
                   InputProps={{
                     style: {
-                      backgroundColor: "#ffffff",
+                      backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
                       padding: "10px",
                       transition:
-                        "border-color 0.3s ease, box-shadow 0.3s ease",
+                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                      color: isLightMode ? "#000000" : "#F5F5F5",
                     },
                   }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
-                      "& fieldset": { borderColor: "#ccc" },
-                      "&:hover fieldset": { borderColor: "#3f51b5" },
-                      "&:focus-within fieldset": {
-                        borderColor: "#3f51b5",
-                        boxShadow: "0 0 5px rgba(63, 81, 181, 0.5)",
+                      "& fieldset": {
+                        borderColor: isLightMode ? "#ccc" : "#888",
                       },
+                      "&:hover fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      },
+                      "&:focus-within fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        boxShadow: isLightMode
+                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
+                          : "0 0 5px rgba(187, 134, 252, 0.5)",
+                      }, // Focus effect
                     },
                   }}
                 />
@@ -247,7 +305,9 @@ const Budgets = ({ userId }) => {
                 }}
                 sx={{
                   "&:hover": {
-                    backgroundColor: "#ffebee",
+                    backgroundColor: isLightMode
+                      ? "#ffebee"
+                      : theme.palette.error.light,
                     transform: "scale(1.05)",
                   },
                 }}
@@ -259,16 +319,22 @@ const Budgets = ({ userId }) => {
                 type="submit"
                 variant="contained"
                 color="primary"
-                style={{
+                sx={{
                   padding: "10px 20px",
                   borderRadius: "8px",
                   fontWeight: 600,
                   transition: "background-color 0.3s ease, transform 0.2s ease",
-                }}
-                sx={{
+                  backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32", // Green shades for light and dark mode
+                  color: isLightMode ? "#ffffff" : "#E0E0E0", // Text color for readability
                   "&:hover": {
-                    backgroundColor: "#3f51b5",
+                    backgroundColor: isLightMode ? "#388E3C" : "#1B5E20", // Slightly darker on hover
                     transform: "scale(1.05)",
+                  },
+                  "&.Mui-disabled": {
+                    backgroundColor: isLightMode
+                      ? "none"
+                      : theme.palette.grey[300],
+                    color: theme.palette.grey[500], 
                   },
                 }}
                 disabled={isNewBudgetBtnDisable}
@@ -286,7 +352,10 @@ const Budgets = ({ userId }) => {
         PaperProps={{
           style: {
             borderRadius: "12px",
-            boxShadow: "0px 8px 30px rgba(0, 0, 0, 0.2)",
+            boxShadow: isLightMode
+              ? "0px 8px 30px rgba(0, 0, 0, 0.2)" // Subtle shadow for light mode
+              : "0px 8px 30px rgba(0, 0, 0, 0.5)", // Stronger shadow for dark mode
+            backgroundColor: isLightMode ? "#fff" : "#333", // Adjust background for dark mode
           },
         }}
         fullWidth
@@ -296,10 +365,15 @@ const Budgets = ({ userId }) => {
           <Paper
             style={{
               padding: "40px",
-              backgroundColor: "#f9f9f9",
+              backgroundColor: isLightMode ? "#f9f9f9" : "#424242", // Light gray for light mode, dark gray for dark mode
               borderRadius: "12px",
-              transition: "all 0.3s ease", // Added transition for paper
+              color: isLightMode ? "#424242" : "#E0E0E0", // Text color for readability
+              transition: "all 0.3s ease", // Smooth transition for theme switching
+              boxShadow: isLightMode
+                ? "0px 4px 8px rgba(0, 0, 0, 0.1)" // Light shadow for light mode
+                : "0px 4px 12px rgba(0, 0, 0, 0.3)", // Darker, deeper shadow for dark mode
             }}
+            elevation={isLightMode ? 2 : 5}
           >
             <DialogTitle
               style={{
@@ -336,20 +410,27 @@ const Budgets = ({ userId }) => {
                   autoFocus
                   InputProps={{
                     style: {
-                      backgroundColor: "#ffffff",
+                      backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
                       padding: "10px",
                       transition:
                         "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                      color: isLightMode ? "#000000" : "#F5F5F5",
                     },
                   }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
-                      "& fieldset": { borderColor: "#ccc" },
-                      "&:hover fieldset": { borderColor: "#3f51b5" },
+                      "& fieldset": {
+                        borderColor: isLightMode ? "#ccc" : "#888",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      },
                       "&:focus-within fieldset": {
-                        borderColor: "#3f51b5",
-                        boxShadow: "0 0 5px rgba(63, 81, 181, 0.5)",
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        boxShadow: isLightMode
+                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
+                          : "0 0 5px rgba(187, 134, 252, 0.5)",
                       }, // Focus effect
                     },
                   }}
@@ -370,21 +451,28 @@ const Budgets = ({ userId }) => {
                   variant="outlined"
                   InputProps={{
                     style: {
-                      backgroundColor: "#ffffff",
+                      backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
                       padding: "10px",
                       transition:
-                        "border-color 0.3s ease, box-shadow 0.3s ease",
+                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                      color: isLightMode ? "#000000" : "#F5F5F5",
                     },
                   }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
-                      "& fieldset": { borderColor: "#ccc" },
-                      "&:hover fieldset": { borderColor: "#3f51b5" },
-                      "&:focus-within fieldset": {
-                        borderColor: "#3f51b5",
-                        boxShadow: "0 0 5px rgba(63, 81, 181, 0.5)",
+                      "& fieldset": {
+                        borderColor: isLightMode ? "#ccc" : "#888",
                       },
+                      "&:hover fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      },
+                      "&:focus-within fieldset": {
+                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        boxShadow: isLightMode
+                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
+                          : "0 0 5px rgba(187, 134, 252, 0.5)",
+                      }, // Focus effect
                     },
                   }}
                 />
@@ -405,7 +493,9 @@ const Budgets = ({ userId }) => {
                 }}
                 sx={{
                   "&:hover": {
-                    backgroundColor: "#ffebee",
+                    backgroundColor: isLightMode
+                      ? "#ffebee"
+                      : theme.palette.error.light,
                     transform: "scale(1.05)",
                   },
                 }}
@@ -417,16 +507,22 @@ const Budgets = ({ userId }) => {
                 type="submit"
                 variant="contained"
                 color="primary"
-                style={{
+                sx={{
                   padding: "10px 20px",
                   borderRadius: "8px",
                   fontWeight: 600,
                   transition: "background-color 0.3s ease, transform 0.2s ease",
-                }}
-                sx={{
+                  backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32", // Green shades for light and dark mode
+                  color: isLightMode ? "#ffffff" : "#E0E0E0", // Text color for readability
                   "&:hover": {
-                    backgroundColor: "#3f51b5",
+                    backgroundColor: isLightMode ? "#388E3C" : "#1B5E20", // Slightly darker on hover
                     transform: "scale(1.05)",
+                  },
+                  "&.Mui-disabled": {
+                    backgroundColor: isLightMode
+                      ? "none"
+                      : theme.palette.grey[300],
+                    color: theme.palette.grey[500], 
                   },
                 }}
                 disabled={isSelectedBudgetBtnDisable}
@@ -446,7 +542,11 @@ const Budgets = ({ userId }) => {
         <Alert
           onClose={handleSnackbarClose}
           severity="success"
-          sx={{ width: "100%" }}
+          sx={{
+            width: "100%",
+            backgroundColor: theme.palette.success.main, // Use theme colors
+            color: theme.palette.getContrastText(theme.palette.success.main), // Ensure contrast
+          }}
         >
           {snackbarMessage}
         </Alert>
@@ -466,9 +566,14 @@ const Budgets = ({ userId }) => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
-                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                    boxShadow: isLightMode
+                      ? "0px 4px 10px rgba(0, 0, 0, 0.1)"
+                      : "0px 4px 10px rgba(255, 255, 255, 0.2)",
                     transition: "transform 0.3s",
                     cursor: "pointer",
+                    backgroundColor: theme.palette.background.paper,
+                    color: theme.palette.text.primary,
+                    borderRadius: "8px",
                   }}
                   onMouseOver={(e) =>
                     (e.currentTarget.style.transform = "scale(1.03)")
@@ -482,7 +587,9 @@ const Budgets = ({ userId }) => {
                       backgroundColor: "#f5f5f5",
                       borderRadius: "8px",
                       padding: "16px",
-                      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                      boxShadow: isLightMode
+                        ? "0px 4px 10px rgba(0, 0, 0, 0.1)"
+                        : "0px 4px 10px rgba(255, 255, 255, 0.2)",
                     }}
                   >
                     <Typography
@@ -524,6 +631,12 @@ const Budgets = ({ userId }) => {
                       justifyContent: "flex-end",
                       alignItems: "center",
                       paddingTop: "8px",
+                      backgroundColor: isLightMode
+                        ? "transparent"
+                        : theme.palette.background.default,
+                      boxShadow: isLightMode
+                        ? "none"
+                        : "0px 4px 10px rgba(255, 255, 255, 0.1)",
                     }}
                   >
                     <Tooltip title="Update Budget">
@@ -535,19 +648,34 @@ const Budgets = ({ userId }) => {
                           padding: 8,
                           borderRadius: "50%",
                           margin: "0 8px",
-                          backgroundColor: "#e3f2fd",
+                          backgroundColor: isLightMode
+                            ? "#e3f2fd"
+                            : theme.palette.background.default,
                           transition: "all 0.3s ease",
-                          boxShadow: "0px 4px 10px rgba(33, 150, 243, 0.3)",
+                          boxShadow: isLightMode
+                            ? "0px 4px 10px rgba(33, 150, 243, 0.3)"
+                            : `0px 4px 10px ${theme.palette.primary.main}40`,
                         }}
                         sx={{
                           "&:hover": {
-                            backgroundColor: "#bbdefb",
+                            backgroundColor: isLightMode
+                              ? "#bbdefb"
+                              : theme.palette.primary.light,
                             transform: "scale(1.1)",
-                            boxShadow: "0px 6px 15px rgba(33, 150, 243, 0.5)",
+                            boxShadow: isLightMode
+                              ? "0px 6px 15px rgba(33, 150, 243, 0.5)"
+                              : `0px 6px 15px ${theme.palette.primary.main}80`,
                           },
                         }}
                       >
-                        <EditIcon fontSize="medium" />
+                        <EditIcon
+                          fontSize="medium"
+                          style={{
+                            color: isLightMode
+                              ? theme.palette.primary.light
+                              : theme.palette.common.white,
+                          }}
+                        />
                       </IconButton>
                     </Tooltip>
 
@@ -559,19 +687,26 @@ const Budgets = ({ userId }) => {
                         style={{
                           padding: 8,
                           borderRadius: "50%",
-                          backgroundColor: "#ffebee",
+                          backgroundColor: isLightMode ? "#ffebee" : theme.palette.error.dark,
                           transition: "all 0.3s ease",
                           boxShadow: "0px 4px 10px rgba(244, 67, 54, 0.3)",
                         }}
                         sx={{
                           "&:hover": {
-                            backgroundColor: "#ffcdd2",
+                            backgroundColor: isLightMode ? "#ffcdd2" : theme.palette.error.light,
                             transform: "scale(1.1)",
                             boxShadow: "0px 6px 15px rgba(244, 67, 54, 0.5)",
                           },
                         }}
                       >
-                        <DeleteIcon fontSize="medium" />
+                        <DeleteIcon
+                          fontSize="medium"
+                          style={{
+                            color: isLightMode
+                              ? theme.palette.secondary.light
+                              : theme.palette.common.white,
+                          }}
+                        />
                       </IconButton>
                     </Tooltip>
                   </CardContent>
