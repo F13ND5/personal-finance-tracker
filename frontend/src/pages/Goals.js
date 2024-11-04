@@ -24,6 +24,8 @@ import {
   IconButton,
   ToggleButton,
   Tooltip,
+  Fade,
+  Grow,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -115,6 +117,17 @@ const Goals = ({ userId }) => {
   const handleUpdateDialogClose = () => setUpdateDialogOpen(false);
   const handleSnackbarClose = () => setSnackbarOpen(false);
 
+  const isNewGoalTitleValid = newGoal.title !== "" && newGoal.title !== null;
+  const isNewGoalTargetValid = newGoal.target !== "" && newGoal.target !== null;
+  const isNewGoalBtnDisable = !isNewGoalTitleValid || !isNewGoalTargetValid;
+
+  const isSelectedGoalTitleValid =
+    selectedGoal?.title !== "" && selectedGoal?.title !== null;
+  const isSelectedGoalTargetValid =
+    selectedGoal?.target !== "" && selectedGoal?.target !== null;
+  const isSelectedGoalBtnDisable =
+    !isSelectedGoalTitleValid || !isSelectedGoalTargetValid;
+
   if (loading) return <CircularProgress />;
 
   return (
@@ -133,92 +146,314 @@ const Goals = ({ userId }) => {
         <AddIcon />
       </IconButton>
 
-      <Dialog open={addDialogOpen} onClose={handleAddDialogClose}>
-        <Paper style={{ padding: "20px", marginTop: "50px" }}>
-          <DialogTitle>Add New Goal</DialogTitle>
-          <DialogContent>
-            <form onSubmit={handleAddGoal}>
-              <TextField
-                label="Title"
-                value={newGoal.title}
-                onChange={(e) =>
-                  setNewGoal({ ...newGoal, title: e.target.value })
-                }
-                required
-                fullWidth
-                style={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Goal"
-                type="number"
-                value={newGoal.target}
-                onChange={(e) =>
-                  setNewGoal({ ...newGoal, target: e.target.value })
-                }
-                required
-                fullWidth
-                style={{ marginBottom: "10px" }}
-              />
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleAddDialogClose} color="secondary">
-              Cancel
-            </Button>
-            <Button onClick={handleAddGoal} variant="contained" color="primary">
-              Add Goal
-            </Button>
-          </DialogActions>
-        </Paper>
+      <Dialog
+        open={addDialogOpen}
+        onClose={handleAddDialogClose}
+        PaperProps={{
+          style: {
+            borderRadius: "12px",
+            boxShadow: "0px 8px 30px rgba(0, 0, 0, 0.2)",
+          },
+        }}
+        fullWidth
+        maxWidth="sm"
+      >
+        <Fade in={addDialogOpen}>
+          <Paper
+            style={{
+              padding: "40px",
+              backgroundColor: "#f9f9f9",
+              borderRadius: "12px",
+              transition: "all 0.3s ease", // Added transition for paper
+            }}
+          >
+            <DialogTitle
+              style={{
+                textAlign: "center",
+                fontSize: "1.75rem",
+                fontWeight: 600,
+                color: "#3f51b5",
+              }}
+            >
+              Add New Goal
+            </DialogTitle>
+            <DialogContent>
+              <form
+                onSubmit={handleAddGoal}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "15px",
+                }}
+              >
+                <TextField
+                  label="Goal Title"
+                  placeholder="Enter your goal title"
+                  value={newGoal.title}
+                  onChange={(e) =>
+                    setNewGoal({ ...newGoal, title: e.target.value })
+                  }
+                  required
+                  fullWidth
+                  variant="outlined"
+                  autoFocus
+                  InputProps={{
+                    style: {
+                      backgroundColor: "#ffffff",
+                      borderRadius: "8px",
+                      padding: "10px",
+                      transition:
+                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": { borderColor: "#ccc" },
+                      "&:hover fieldset": { borderColor: "#3f51b5" },
+                      "&:focus-within fieldset": {
+                        borderColor: "#3f51b5",
+                        boxShadow: "0 0 5px rgba(63, 81, 181, 0.5)",
+                      }, // Focus effect
+                    },
+                  }}
+                />
+                <TextField
+                  label="Target Amount"
+                  placeholder="Enter target amount"
+                  type="number"
+                  value={newGoal.target}
+                  onChange={(e) =>
+                    setNewGoal({ ...newGoal, target: e.target.value })
+                  }
+                  required
+                  fullWidth
+                  variant="outlined"
+                  InputProps={{
+                    style: {
+                      backgroundColor: "#ffffff",
+                      borderRadius: "8px",
+                      padding: "10px",
+                      transition:
+                        "border-color 0.3s ease, box-shadow 0.3s ease",
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": { borderColor: "#ccc" },
+                      "&:hover fieldset": { borderColor: "#3f51b5" },
+                      "&:focus-within fieldset": {
+                        borderColor: "#3f51b5",
+                        boxShadow: "0 0 5px rgba(63, 81, 181, 0.5)",
+                      },
+                    },
+                  }}
+                />
+              </form>
+            </DialogContent>
+            <DialogActions
+              style={{ justifyContent: "space-between", paddingTop: "20px" }}
+            >
+              <Button
+                onClick={handleAddDialogClose}
+                color="error"
+                variant="outlined"
+                style={{
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  transition: "background-color 0.3s ease, transform 0.2s ease", // Transition for button
+                }}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#ffebee",
+                    transform: "scale(1.05)",
+                  },
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAddGoal}
+                type="submit"
+                variant="contained"
+                color="primary"
+                style={{
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  transition: "background-color 0.3s ease, transform 0.2s ease",
+                }}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#3f51b5",
+                    transform: "scale(1.05)",
+                  },
+                }}
+                disabled={isNewGoalBtnDisable}
+              >
+                Add Goal
+              </Button>
+            </DialogActions>
+          </Paper>
+        </Fade>
       </Dialog>
 
-      <Dialog open={updateDialogOpen} onClose={handleUpdateDialogClose}>
-        <Paper style={{ padding: "20px", marginTop: "50px" }}>
-          <DialogTitle>Update Goal</DialogTitle>
-          <DialogContent>
-            <form onSubmit={updateGoal}>
-              <TextField
-                label="title"
-                value={selectedGoal?.title || ""}
-                onChange={(e) =>
-                  setSelectedGoal({
-                    ...selectedGoal,
-                    title: e.target.value,
-                  })
-                }
-                required
-                fullWidth
-                style={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Amount"
-                type="number"
-                value={selectedGoal?.target || ""}
-                onChange={(e) =>
-                  setSelectedGoal({
-                    ...selectedGoal,
-                    target: e.target.value,
-                  })
-                }
-                required
-                fullWidth
-                style={{ marginBottom: "10px" }}
-              />
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleUpdateDialogClose} color="secondary">
-              Cancel
-            </Button>
-            <Button
-              onClick={handleUpdateGoal}
-              variant="contained"
-              color="primary"
+      <Dialog
+        open={updateDialogOpen}
+        onClose={handleUpdateDialogClose}
+        PaperProps={{
+          style: {
+            borderRadius: "12px",
+            boxShadow: "0px 8px 30px rgba(0, 0, 0, 0.2)",
+          },
+        }}
+        fullWidth
+        maxWidth="sm"
+      >
+        <Fade in={updateDialogOpen}>
+          <Paper
+            style={{
+              padding: "40px",
+              backgroundColor: "#f9f9f9",
+              borderRadius: "12px",
+              transition: "all 0.3s ease", // Added transition for paper
+            }}
+          >
+            <DialogTitle
+              style={{
+                textAlign: "center",
+                fontSize: "1.75rem",
+                fontWeight: 600,
+                color: "#3f51b5",
+              }}
             >
               Update Goal
-            </Button>
-          </DialogActions>
-        </Paper>
+            </DialogTitle>
+            <DialogContent>
+              <form
+                onSubmit={updateGoal}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "15px",
+                }}
+              >
+                <TextField
+                  label="Goal Title"
+                  placeholder="Enter your goal title"
+                  value={selectedGoal?.title || ""}
+                  onChange={(e) =>
+                    setSelectedGoal({
+                      ...selectedGoal,
+                      title: e.target.value,
+                    })
+                  }
+                  required
+                  fullWidth
+                  variant="outlined"
+                  autoFocus
+                  InputProps={{
+                    style: {
+                      backgroundColor: "#ffffff",
+                      borderRadius: "8px",
+                      padding: "10px",
+                      transition:
+                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": { borderColor: "#ccc" },
+                      "&:hover fieldset": { borderColor: "#3f51b5" },
+                      "&:focus-within fieldset": {
+                        borderColor: "#3f51b5",
+                        boxShadow: "0 0 5px rgba(63, 81, 181, 0.5)",
+                      }, // Focus effect
+                    },
+                  }}
+                />
+                <TextField
+                  label="Target Amount"
+                  placeholder="Enter target amount"
+                  type="number"
+                  value={selectedGoal?.target || ""}
+                  onChange={(e) =>
+                    setSelectedGoal({
+                      ...selectedGoal,
+                      target: e.target.value,
+                    })
+                  }
+                  required
+                  fullWidth
+                  variant="outlined"
+                  InputProps={{
+                    style: {
+                      backgroundColor: "#ffffff",
+                      borderRadius: "8px",
+                      padding: "10px",
+                      transition:
+                        "border-color 0.3s ease, box-shadow 0.3s ease",
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": { borderColor: "#ccc" },
+                      "&:hover fieldset": { borderColor: "#3f51b5" },
+                      "&:focus-within fieldset": {
+                        borderColor: "#3f51b5",
+                        boxShadow: "0 0 5px rgba(63, 81, 181, 0.5)",
+                      },
+                    },
+                  }}
+                />
+              </form>
+            </DialogContent>
+            <DialogActions
+              style={{ justifyContent: "space-between", paddingTop: "20px" }}
+            >
+              <Button
+                onClick={handleUpdateDialogClose}
+                color="error"
+                variant="outlined"
+                style={{
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  transition: "background-color 0.3s ease, transform 0.2s ease", // Transition for button
+                }}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#ffebee",
+                    transform: "scale(1.05)",
+                  },
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdateGoal}
+                type="submit"
+                variant="contained"
+                color="primary"
+                style={{
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  transition: "background-color 0.3s ease, transform 0.2s ease",
+                }}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#3f51b5",
+                    transform: "scale(1.05)",
+                  },
+                }}
+                disabled={isSelectedGoalBtnDisable}
+              >
+                Update Goal
+              </Button>
+            </DialogActions>
+          </Paper>
+        </Fade>
       </Dialog>
 
       <Snackbar
@@ -240,164 +475,166 @@ const Goals = ({ userId }) => {
           Your Goals
         </Typography>
         <Grid2 container spacing={3}>
-          {goals.map((goal) => (
+          {goals.map((goal, index) => (
             <Grid2 item xs={12} sm={6} md={4} key={goal.id}>
-              <Card
-                style={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-                  transition: "transform 0.3s",
-                  cursor: "pointer",
-                }}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.03)")
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
-              >
-                <CardContent
+              <Grow in={true} timeout={index * 500}>
+                <Card
                   style={{
-                    backgroundColor: "#f5f5f5",
-                    borderRadius: "8px",
-                    padding: "16px",
-                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
-                  <Typography
-                    variant="h6"
-                    style={{ color: "#1E88E5", fontWeight: 600 }}
-                  >
-                    {goal.title}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    style={{
-                      margin: "8px 0",
-                      fontSize: "16px",
-                      display: "flex",
-                      alignItems: "center",
-                      color: "#424242",
-                    }}
-                  >
-                    <strong>Target:</strong> ${goal.target}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    style={{
-                      color: "#757575",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <strong>Date:</strong>{" "}
-                    {new Date(goal.date.seconds * 1000).toLocaleDateString()}
-                  </Typography>
-                </CardContent>
-
-                <CardContent
-                  style={{
+                    height: "100%",
                     display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                    paddingTop: "8px",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                    transition: "transform 0.3s",
+                    cursor: "pointer",
                   }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.transform = "scale(1.03)")
+                  }
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.transform = "scale(1)")
+                  }
                 >
-                  <Tooltip
-                    title={
-                      goal.isAchieved
-                        ? "Mark as Not Achieved"
-                        : "Mark as Achieved"
-                    }
+                  <CardContent
+                    style={{
+                      backgroundColor: "#f5f5f5",
+                      borderRadius: "8px",
+                      padding: "16px",
+                      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                    }}
                   >
-                    <ToggleButton
-                      value="check"
-                      selected={goal.isAchieved}
-                      onChange={() => handleToggleAchieved(goal)}
+                    <Typography
+                      variant="h6"
+                      style={{ color: "#1E88E5", fontWeight: 600 }}
+                    >
+                      {goal.title}
+                    </Typography>
+                    <Typography
+                      variant="body1"
                       style={{
-                        padding: 4,
-                        borderRadius: "50%",
-                        backgroundColor: goal.isAchieved
-                          ? "#e0ffe0"
-                          : "transparent",
-                        transition: "all 0.3s ease",
-                        boxShadow: goal.isAchieved
-                          ? "0px 4px 10px rgba(0, 128, 0, 0.3)"
-                          : "none",
+                        margin: "8px 0",
+                        fontSize: "16px",
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#424242",
                       }}
-                      sx={{
-                        "&:hover": {
+                    >
+                      <strong>Target:</strong> ${goal.target}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      style={{
+                        color: "#757575",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <strong>Date:</strong>{" "}
+                      {new Date(goal.date.seconds * 1000).toLocaleDateString()}
+                    </Typography>
+                  </CardContent>
+
+                  <CardContent
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      paddingTop: "8px",
+                    }}
+                  >
+                    <Tooltip
+                      title={
+                        goal.isAchieved
+                          ? "Mark as Not Achieved"
+                          : "Mark as Achieved"
+                      }
+                    >
+                      <ToggleButton
+                        value="check"
+                        selected={goal.isAchieved}
+                        onChange={() => handleToggleAchieved(goal)}
+                        style={{
+                          padding: 4,
+                          borderRadius: "50%",
                           backgroundColor: goal.isAchieved
-                            ? "#ccffcc"
-                            : "#f0f0f0",
-                          transform: "scale(1.1)",
-                        },
-                      }}
-                    >
-                      {goal.isAchieved ? (
-                        <CheckCircleIcon color="success" fontSize="large" />
-                      ) : (
-                        <RadioButtonUncheckedIcon
-                          color="disabled"
-                          fontSize="large"
-                        />
-                      )}
-                    </ToggleButton>
-                  </Tooltip>
+                            ? "#e0ffe0"
+                            : "transparent",
+                          transition: "all 0.3s ease",
+                          boxShadow: goal.isAchieved
+                            ? "0px 4px 10px rgba(0, 128, 0, 0.3)"
+                            : "none",
+                        }}
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: goal.isAchieved
+                              ? "#ccffcc"
+                              : "#f0f0f0",
+                            transform: "scale(1.1)",
+                          },
+                        }}
+                      >
+                        {goal.isAchieved ? (
+                          <CheckCircleIcon color="success" fontSize="large" />
+                        ) : (
+                          <RadioButtonUncheckedIcon
+                            color="disabled"
+                            fontSize="large"
+                          />
+                        )}
+                      </ToggleButton>
+                    </Tooltip>
 
-                  <Tooltip title="Update Goal">
-                    <IconButton
-                      aria-label="edit"
-                      color="primary"
-                      onClick={() => handleUpdateDialogOpen(goal)}
-                      style={{
-                        padding: 8,
-                        borderRadius: "50%",
-                        margin: "0 8px",
-                        backgroundColor: "#e3f2fd",
-                        transition: "all 0.3s ease",
-                        boxShadow: "0px 4px 10px rgba(33, 150, 243, 0.3)",
-                      }}
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: "#bbdefb",
-                          transform: "scale(1.1)",
-                          boxShadow: "0px 6px 15px rgba(33, 150, 243, 0.5)",
-                        },
-                      }}
-                    >
-                      <EditIcon fontSize="medium" />
-                    </IconButton>
-                  </Tooltip>
+                    <Tooltip title="Update Goal">
+                      <IconButton
+                        aria-label="edit"
+                        color="primary"
+                        onClick={() => handleUpdateDialogOpen(goal)}
+                        style={{
+                          padding: 8,
+                          borderRadius: "50%",
+                          margin: "0 8px",
+                          backgroundColor: "#e3f2fd",
+                          transition: "all 0.3s ease",
+                          boxShadow: "0px 4px 10px rgba(33, 150, 243, 0.3)",
+                        }}
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: "#bbdefb",
+                            transform: "scale(1.1)",
+                            boxShadow: "0px 6px 15px rgba(33, 150, 243, 0.5)",
+                          },
+                        }}
+                      >
+                        <EditIcon fontSize="medium" />
+                      </IconButton>
+                    </Tooltip>
 
-                  <Tooltip title="Delete Goal">
-                    <IconButton
-                      aria-label="delete"
-                      color="secondary"
-                      onClick={() => handleDeleteGoal(goal.id)}
-                      style={{
-                        padding: 8,
-                        borderRadius: "50%",
-                        backgroundColor: "#ffebee",
-                        transition: "all 0.3s ease",
-                        boxShadow: "0px 4px 10px rgba(244, 67, 54, 0.3)",
-                      }}
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: "#ffcdd2",
-                          transform: "scale(1.1)",
-                          boxShadow: "0px 6px 15px rgba(244, 67, 54, 0.5)",
-                        },
-                      }}
-                    >
-                      <DeleteIcon fontSize="medium" />
-                    </IconButton>
-                  </Tooltip>
-                </CardContent>
-              </Card>
+                    <Tooltip title="Delete Goal">
+                      <IconButton
+                        aria-label="delete"
+                        color="secondary"
+                        onClick={() => handleDeleteGoal(goal.id)}
+                        style={{
+                          padding: 8,
+                          borderRadius: "50%",
+                          backgroundColor: "#ffebee",
+                          transition: "all 0.3s ease",
+                          boxShadow: "0px 4px 10px rgba(244, 67, 54, 0.3)",
+                        }}
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: "#ffcdd2",
+                            transform: "scale(1.1)",
+                            boxShadow: "0px 6px 15px rgba(244, 67, 54, 0.5)",
+                          },
+                        }}
+                      >
+                        <DeleteIcon fontSize="medium" />
+                      </IconButton>
+                    </Tooltip>
+                  </CardContent>
+                </Card>
+              </Grow>
             </Grid2>
           ))}
         </Grid2>
