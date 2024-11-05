@@ -11,6 +11,7 @@ import UserProfile from "./pages/UserProfile";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
+import EducationalResources from "./pages/EducationalResources";
 
 const App = () => {
   const [userId, setUserId] = useState(null);
@@ -37,6 +38,7 @@ const App = () => {
           <Route path="/goals" element={<Goals userId={userId} />} />
           <Route path="/budgets" element={<Budgets userId={userId} />} />
           <Route path="/profile" element={<UserProfile userId={userId} />} />
+          <Route path="/resources" element={<EducationalResources userId={userId} />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
         </Routes>

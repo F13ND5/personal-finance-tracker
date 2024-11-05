@@ -20,6 +20,7 @@ import {
   getGoals,
   getAchievedGoals,
 } from "../services/firestoreService";
+import { useNavigate } from "react-router-dom";
 
 const boxStyles = (isLightMode, theme) => ({
   borderRadius: 2,
@@ -41,34 +42,40 @@ const Dashboard = ({ userId }) => {
   const [goals, setGoals] = useState([]);
   const [achievedGoals, setAchievedGoals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
-    if (!userId) return; // Ensure userId is available
-    setLoading(true);
-
-    try {
-      const [
-        fetchedExpenses,
-        fetchedBudgets,
-        fetchedGoals,
-        fetchedAchievedGoals,
-      ] = await Promise.all([
-        getExpenses(userId),
-        getBudgets(userId),
-        getGoals(userId),
-        getAchievedGoals(userId),
-      ]);
-
-      setExpenses(fetchedExpenses);
-      setBudgets(fetchedBudgets);
-      setGoals(fetchedGoals);
-      setAchievedGoals(fetchedAchievedGoals); // Set achieved goals data
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-    } finally {
-      setLoading(false);
+    if (!userId) {
+      navigate("/");
+      const timer = setTimeout(() => {
+        navigate("/signin");
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      try {
+        const [
+          fetchedExpenses,
+          fetchedBudgets,
+          fetchedGoals,
+          fetchedAchievedGoals,
+        ] = await Promise.all([
+          getExpenses(userId),
+          getBudgets(userId),
+          getGoals(userId),
+          getAchievedGoals(userId),
+        ]);
+        setLoading(true);
+        setExpenses(fetchedExpenses);
+        setBudgets(fetchedBudgets);
+        setGoals(fetchedGoals);
+        setAchievedGoals(fetchedAchievedGoals); // Set achieved goals data
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [userId]);
+  }, [userId, navigate]);
 
   useEffect(() => {
     fetchData();

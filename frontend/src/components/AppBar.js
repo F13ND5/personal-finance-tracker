@@ -86,6 +86,9 @@ const Navbar = () => {
             <Button component={Link} to="/budgets" color="inherit">
               Budgets
             </Button>
+            <Button component={Link} to="/resources" color="inherit">
+              Resources
+            </Button>
             <div>
               {/* Assuming 'user.profileImage' contains the user's profile image URL */}
               <IconButton onClick={handleMenuOpen}>
@@ -108,6 +111,12 @@ const Navbar = () => {
               color="inherit"
               aria-label="menu"
               onClick={handleMenuOpen}
+              sx={{
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.2)", // Light hover effect
+                  borderRadius: "4px", // Rounded corners
+                },
+              }}
             >
               <MenuIcon />
             </IconButton>
@@ -115,21 +124,40 @@ const Navbar = () => {
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
+              PaperProps={{
+                sx: {
+                  borderRadius: "8px", // Rounded corners for menu
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)", // Subtle shadow
+                  "& .MuiMenuItem-root": {
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.08)", // Hover effect for menu items
+                    },
+                  },
+                },
+              }}
             >
               <MenuItem onClick={handleMenuClose}>
                 <Link
                   to="/signin"
-                  style={{ textDecoration: "none", color: "black" }}
+                  style={{
+                    textDecoration: "none",
+                    color: "inherit", // Use the color from the theme
+                    width: "100%", // Full width for better touch targets
+                  }}
                 >
-                  Sign In
+                  <Typography variant="body1">Sign In</Typography>
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleMenuClose}>
                 <Link
                   to="/signup"
-                  style={{ textDecoration: "none", color: "black" }}
+                  style={{
+                    textDecoration: "none",
+                    color: "inherit", // Use the color from the theme
+                    width: "100%", // Full width for better touch targets
+                  }}
                 >
-                  Sign Up
+                  <Typography variant="body1">Sign Up</Typography>
                 </Link>
               </MenuItem>
             </Menu>

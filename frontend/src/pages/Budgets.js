@@ -52,7 +52,11 @@ const Budgets = ({ userId }) => {
 
   useEffect(() => {
     if (!userId) {
-      navigate("/signin"); // Redirect to SignIn if no userId
+      navigate("/budgets");
+      const timer = setTimeout(() => {
+        navigate("/signin");
+      }, 1000);
+      return () => clearTimeout(timer);
     } else {
       const fetchBudgets = async () => {
         const budgetsData = await getBudgets(userId);

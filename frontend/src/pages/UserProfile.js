@@ -16,6 +16,7 @@ import { useTheme } from "@mui/material/styles";
 import MuiAlert from "@mui/material/Alert";
 import EditIcon from "@mui/icons-material/Edit";
 import { getUserProfile, updateUserProfile } from "../services/userService"; // Service to manage user data
+import { useNavigate } from "react-router-dom";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -31,23 +32,32 @@ const UserProfile = ({ userId }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProfileData = async () => {
-      try {
-        const data = await getUserProfile(userId);
-        if (data) {
-          setUserData(data);
-          setImagePreview(data.profileImage);
+    if (!userId) {
+      navigate("/profile");
+      const timer = setTimeout(() => {
+        navigate("/signin");
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      const fetchProfileData = async () => {
+        try {
+          const data = await getUserProfile(userId);
+          if (data) {
+            setUserData(data);
+            setImagePreview(data.profileImage);
+          }
+        } catch (error) {
+          console.error("Failed to fetch user profile:", error);
+        } finally {
+          setLoading(false); // End loading state after data fetch
         }
-      } catch (error) {
-        console.error("Failed to fetch user profile:", error);
-      } finally {
-        setLoading(false); // End loading state after data fetch
-      }
-    };
-    fetchProfileData();
-  }, [userId]);
+      };
+      fetchProfileData();
+    }
+  }, [userId, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -101,7 +111,9 @@ const UserProfile = ({ userId }) => {
   const isUserDataAddressValid =
     userData?.address !== "" && userData?.address !== null;
   const isUserDataBtnDisable =
-    !isUserDataFullNameValid || !isUserDataPhoneNumberValid || !isUserDataAddressValid;
+    !isUserDataFullNameValid ||
+    !isUserDataPhoneNumberValid ||
+    !isUserDataAddressValid;
 
   return (
     <Container maxWidth="sm">

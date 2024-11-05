@@ -59,7 +59,11 @@ const Goals = ({ userId }) => {
 
   useEffect(() => {
     if (!userId) {
-      navigate("/signin"); // Redirect to SignIn if no userId
+      navigate("/goals");
+      const timer = setTimeout(() => {
+        navigate("/signin");
+      }, 1000);
+      return () => clearTimeout(timer);
     } else {
       const fetchGoals = async () => {
         const goalsData = await getGoals(userId);
