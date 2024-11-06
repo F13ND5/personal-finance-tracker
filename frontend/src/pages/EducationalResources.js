@@ -13,9 +13,14 @@ import {
   Divider,
   ToggleButton,
   ToggleButtonGroup,
+  TextField,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import ArticleIcon from "@mui/icons-material/Article";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
 import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import { useNavigate } from "react-router-dom";
 
@@ -26,6 +31,7 @@ const EducationalResources = ({ userId }) => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("articles");
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,6 +47,7 @@ const EducationalResources = ({ userId }) => {
         try {
           const fetchedArticles = await fetchFinancialArticles();
           const fetchedVideos = await fetchFinancialVideos();
+
           setArticles(fetchedArticles);
           setVideos(fetchedVideos);
         } catch (error) {
@@ -57,8 +64,19 @@ const EducationalResources = ({ userId }) => {
   const handleFilterChange = (event, newFilter) => {
     if (newFilter !== null) {
       setFilter(newFilter);
+      setSearchTerm("");
     }
   };
+
+  const filteredArticles = articles.filter(
+    (article) =>
+      article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      article.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredVideos = videos.filter((video) =>
+    video.snippet.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -112,48 +130,101 @@ const EducationalResources = ({ userId }) => {
         Educational Resources
       </Typography>
 
-      {/* Filter Toggle Buttons */}
-      <Box display="flex" justifyContent="center" mb={4}>
-        <ToggleButtonGroup
-          value={filter}
-          exclusive
-          onChange={handleFilterChange}
-          aria-label="filter"
-          sx={{
-            backgroundColor: "background.paper",
-            borderRadius: "8px",
-            boxShadow: isLightMode
-              ? "0px 4px 10px rgba(0, 0, 0, 0.1)"
-              : "0px 4px 10px rgba(255, 255, 255, 0.2)",
-            "& .MuiToggleButton-root": {
-              padding: "10px 20px",
-              border: "none",
-              fontSize: "1rem",
-              textTransform: "none",
-              color: "text.secondary", // Color for unselected buttons
-              "&.Mui-selected": {
-                backgroundColor: "primary.main", // Background for selected button
-                color: "#fff", // Text color for selected button
-                fontWeight: "bold",
-                "&:hover": {
-                  backgroundColor: "primary.dark", // Hover color for selected button
+      <Box display="flex" mb={4} alignItems="center" sx={{ width: "100%" }}>
+        {/* Search Bar */}
+        <Box sx={{ flex: "0 1 auto", mr: 2 }}>
+          <TextField
+            label="Search Resources"
+            variant="outlined"
+            fullWidth
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{
+              maxWidth: 400,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                "&:hover fieldset": {
+                  borderColor: "primary.main",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "primary.main",
                 },
               },
-              "&:hover": {
-                backgroundColor: "background.default", // Hover color for unselected buttons
+              "& input": {
+                paddingLeft: "48px", // Space for icon
               },
-            },
-          }}
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setSearchTerm("")}
+                    aria-label="clear search"
+                    sx={{
+                      visibility: searchTerm ? "visible" : "hidden",
+                      "&:hover": {
+                        backgroundColor: "transparent", // Remove background on hover
+                      },
+                    }}
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
+
+        {/* Filter Toggle Buttons */}
+        <Box
+          sx={{ flex: "1 1 auto", display: "flex", justifyContent: "center" }}
         >
-          <ToggleButton value="articles" aria-label="articles">
-            <ArticleIcon sx={{ mr: 1 }} />
-            Articles
-          </ToggleButton>
-          <ToggleButton value="videos" aria-label="videos">
-            <PlayCircleFilledIcon sx={{ mr: 1 }} />
-            Videos
-          </ToggleButton>
-        </ToggleButtonGroup>
+          <ToggleButtonGroup
+            value={filter}
+            exclusive
+            onChange={handleFilterChange}
+            aria-label="filter"
+            sx={{
+              backgroundColor: "background.paper",
+              borderRadius: "8px",
+              boxShadow: isLightMode
+                ? "0px 4px 10px rgba(0, 0, 0, 0.1)"
+                : "0px 4px 10px rgba(255, 255, 255, 0.2)",
+              "& .MuiToggleButton-root": {
+                padding: "10px 20px",
+                border: "none",
+                fontSize: "1rem",
+                textTransform: "none",
+                color: "text.secondary", // Color for unselected buttons
+                "&.Mui-selected": {
+                  backgroundColor: "primary.main", // Background for selected button
+                  color: "#fff", // Text color for selected button
+                  fontWeight: "bold",
+                  "&:hover": {
+                    backgroundColor: "primary.dark", // Hover color for selected button
+                  },
+                },
+                "&:hover": {
+                  backgroundColor: "background.default", // Hover color for unselected buttons
+                },
+              },
+            }}
+          >
+            <ToggleButton value="articles" aria-label="articles">
+              <ArticleIcon sx={{ mr: 1 }} />
+              Articles
+            </ToggleButton>
+            <ToggleButton value="videos" aria-label="videos">
+              <PlayCircleFilledIcon sx={{ mr: 1 }} />
+              Videos
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
       </Box>
 
       {filter === "articles" && (
@@ -164,7 +235,7 @@ const EducationalResources = ({ userId }) => {
           <Divider sx={{ mb: 3 }} />
 
           <Grid container spacing={4}>
-            {articles.map((article) => (
+            {filteredArticles.map((article) => (
               <Grid item xs={12} sm={6} md={4} key={article.url}>
                 <Card
                   elevation={3}
@@ -224,7 +295,7 @@ const EducationalResources = ({ userId }) => {
           <Divider sx={{ mb: 3 }} />
 
           <Grid container spacing={4}>
-            {videos.map((video) => (
+            {filteredVideos.map((video) => (
               <Grid item xs={12} sm={6} md={4} key={video.id.videoId}>
                 <Card
                   elevation={3}

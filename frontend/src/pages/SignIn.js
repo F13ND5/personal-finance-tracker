@@ -1,7 +1,14 @@
 // src/pages/SignIn.js
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { signIn } from "../services/authService";
+import {
+  signIn,
+  checkTwoFactorEnabled,
+  sendOtp,
+  verifyOtpService,
+  getUserDataByEmail,
+} from "../services/authService";
+import { setupRecaptcha } from "../firebaseConfig";
 import {
   Button,
   TextField,
@@ -28,13 +35,48 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [otp, setOtp] = useState("");
+  const [isOtpRequired, setIsOtpRequired] = useState(false);
+  const [verificationId, setVerificationId] = useState(null);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       await signIn(email, password);
-      navigate("/"); // Redirect to the dashboard or home page
+      const userData = await getUserDataByEmail(email);
+      const isTwoFactorEnabled = await checkTwoFactorEnabled(userData.email); // Check if 2FA is enabled for the user
+      if (isTwoFactorEnabled) {
+        await getUserDataByEmail(email);
+        
+        const phoneNumber = userData.phoneNumber;
+        console.log("Phone Number", phoneNumber);
+        setupRecaptcha();
+        const confirmationResult = await sendOtp(phoneNumber);
+        setVerificationId(confirmationResult.verificationId);
+        setIsOtpRequired(true);
+      } else {
+        navigate("/"); // Redirect to the dashboard if no OTP is required
+      }
+    } catch (error) {
+      setSnackbarMessage(error.message);
+      setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyOtp = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const verificationResult = await verifyOtpService(verificationId, otp);
+      if (verificationResult) {
+        navigate("/"); // Redirect to the dashboard if OTP verification is successful
+      } else {
+        setSnackbarMessage("Invalid OTP. Please try again.");
+        setSnackbarOpen(true);
+      }
     } catch (error) {
       setSnackbarMessage(error.message);
       setSnackbarOpen(true);
@@ -71,7 +113,10 @@ const SignIn = () => {
           >
             Sign in to continue
           </Typography>
-          <form onSubmit={handleSignIn} style={{ width: "100%" }}>
+          <form
+            onSubmit={isOtpRequired ? verifyOtp : handleSignIn}
+            style={{ width: "100%" }}
+          >
             <TextField
               label="Email"
               type="email"
@@ -142,35 +187,81 @@ const SignIn = () => {
                 },
               }}
             />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              style={{
-                margin: "20px 0",
-                padding: "10px 0",
-                fontWeight: 600,
-                fontSize: "1rem",
-                borderRadius: "8px",
-                transition: "background-color 0.3s ease, transform 0.2s ease",
-                backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32", // Green shades for light and dark mode
-                color: isLightMode ? "#ffffff" : "#E0E0E0", // Text color for readability
-              }}
-              disabled={loading}
-              sx={{
-                "&:hover": {
-                  backgroundColor: isLightMode ? "#388E3C" : "#1B5E20", // Slightly darker on hover
-                  transform: "scale(1.05)",
-                },
-              }}
-            >
-              {loading ? (
-                <CircularProgress size={24} color="inherit" />
-              ) : (
-                "Sign In"
-              )}
-            </Button>
+            {isOtpRequired && (
+              <>
+                <TextField
+                  label="OTP"
+                  type="text"
+                  fullWidth
+                  margin="normal"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  required
+                  variant="outlined"
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  style={{
+                    margin: "20px 0",
+                    padding: "10px 0",
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                    borderRadius: "8px",
+                    transition:
+                      "background-color 0.3s ease, transform 0.2s ease",
+                    backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32", // Green shades for light and dark mode
+                    color: isLightMode ? "#ffffff" : "#E0E0E0", // Text color for readability
+                  }}
+                  disabled={loading}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: isLightMode ? "#388E3C" : "#1B5E20", // Slightly darker on hover
+                      transform: "scale(1.05)",
+                    },
+                  }}
+                >
+                  {loading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    "Verify OTP"
+                  )}
+                </Button>
+              </>
+            )}
+            {!isOtpRequired && (
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                style={{
+                  margin: "20px 0",
+                  padding: "10px 0",
+                  fontWeight: 600,
+                  fontSize: "1rem",
+                  borderRadius: "8px",
+                  transition: "background-color 0.3s ease, transform 0.2s ease",
+                  backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32", // Green shades for light and dark mode
+                  color: isLightMode ? "#ffffff" : "#E0E0E0", // Text color for readability
+                }}
+                disabled={loading}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: isLightMode ? "#388E3C" : "#1B5E20", // Slightly darker on hover
+                    transform: "scale(1.05)",
+                  },
+                }}
+              >
+                {loading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+            )}
             <Typography variant="body2" style={{ marginTop: "10px" }}>
               <Link
                 to="/forgot-password"
@@ -189,6 +280,9 @@ const SignIn = () => {
               </Link>
             </Typography>
           </form>
+
+          {/* Add the reCAPTCHA container here */}
+          <div id="recaptcha-container"></div>
         </Paper>
 
         <Snackbar

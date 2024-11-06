@@ -11,11 +11,17 @@ import {
   CircularProgress,
   Grid2,
   IconButton,
+  Switch,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MuiAlert from "@mui/material/Alert";
 import EditIcon from "@mui/icons-material/Edit";
-import { getUserProfile, updateUserProfile } from "../services/userService"; // Service to manage user data
+import {
+  getUserProfile,
+  updateUserProfile,
+  updateTwoFactorStatus,
+  checkTwoFactorEnabled,
+} from "../services/userService"; // Service to manage user data
 import { useNavigate } from "react-router-dom";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -25,6 +31,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const UserProfile = ({ userId }) => {
   const theme = useTheme();
   const isLightMode = theme.palette.mode === "light";
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [userData, setUserData] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
   const [newImage, setNewImage] = useState(null);
@@ -56,8 +63,32 @@ const UserProfile = ({ userId }) => {
         }
       };
       fetchProfileData();
+      const fetchTwoFactorStatus = async () => {
+        try {
+          const isEnabled = await checkTwoFactorEnabled(userId); // Fetch 2FA status based on userId
+          setTwoFactorEnabled(isEnabled);
+        } catch (error) {
+          console.error("Failed to fetch 2FA status:", error);
+        }
+      };
+      fetchTwoFactorStatus();
     }
   }, [userId, navigate]);
+
+  const handleToggleTwoFactor = async () => {
+    try {
+      const newStatus = !twoFactorEnabled; // Toggle the current status
+      await updateTwoFactorStatus(userId, newStatus); // Update the status in the database
+      setTwoFactorEnabled(newStatus); // Update local state
+      setSnackbarMessage(
+        `2FA has been ${newStatus ? "enabled" : "disabled"} successfully!`
+      );
+      setSnackbarOpen(true);
+    } catch (error) {
+      setSnackbarMessage("Failed to update 2FA status");
+      setSnackbarOpen(true);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -106,12 +137,15 @@ const UserProfile = ({ userId }) => {
 
   const isUserDataFullNameValid =
     userData?.fullName !== "" && userData?.fullName !== null;
+  const isUserDataEmailValid =
+    userData?.email !== "" && userData?.email !== null;
   const isUserDataPhoneNumberValid =
     userData?.phoneNumber !== "" && userData?.phoneNumber !== null;
   const isUserDataAddressValid =
     userData?.address !== "" && userData?.address !== null;
   const isUserDataBtnDisable =
     !isUserDataFullNameValid ||
+    !isUserDataEmailValid ||
     !isUserDataPhoneNumberValid ||
     !isUserDataAddressValid;
 
@@ -184,12 +218,23 @@ const UserProfile = ({ userId }) => {
             </Grid2>
             <Grid2 item>
               <Typography variant="body1">
+                <strong>Email:</strong> {userData.email || "N/A"}
+              </Typography>
+            </Grid2>
+            <Grid2 item>
+              <Typography variant="body1">
                 <strong>Phone Number:</strong> {userData.phoneNumber || "N/A"}
               </Typography>
             </Grid2>
             <Grid2 item>
               <Typography variant="body1">
                 <strong>Address:</strong> {userData.address || "N/A"}
+              </Typography>
+            </Grid2>
+            <Grid2 item>
+              <Typography variant="body1">
+                <strong>Two-Factor Authentication:</strong>{" "}
+                {twoFactorEnabled ? "Enabled" : "Disabled"}
               </Typography>
             </Grid2>
             <Grid2 item>
@@ -219,6 +264,18 @@ const UserProfile = ({ userId }) => {
             </Grid2>
             <Grid2 item>
               <TextField
+                label="Email"
+                name="email"
+                placeholder="Enter email"
+                value={userData.email || ""}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+              />
+            </Grid2>
+            <Grid2 item>
+              <TextField
                 label="Phone Number"
                 name="phoneNumber"
                 placeholder="Enter your phone number"
@@ -240,6 +297,17 @@ const UserProfile = ({ userId }) => {
                 margin="normal"
                 variant="outlined"
               />
+            </Grid2>
+            <Grid2 item>
+              <Typography variant="body1">
+                <strong>Two-Factor Authentication:</strong>
+                <Switch
+                  checked={twoFactorEnabled}
+                  onChange={handleToggleTwoFactor}
+                  color="primary"
+                />
+                {twoFactorEnabled ? "Enabled" : "Disabled"}
+              </Typography>
             </Grid2>
             <Grid2 item>
               <Grid2 container spacing={2}>

@@ -2,7 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebaseConfig.js";
+import {
+  auth,
+  messaging,
+  requestNotificationPermission,
+} from "./firebaseConfig.js";
+import { onMessage } from "firebase/messaging";
 import Navbar from "./components/AppBar";
 import Expenses from "./pages/Expenses";
 import Goals from "./pages/Goals";
@@ -12,6 +17,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import EducationalResources from "./pages/EducationalResources";
+import Chatbot from "./components/Chatbot";
 
 const App = () => {
   const [userId, setUserId] = useState(null);
@@ -25,7 +31,20 @@ const App = () => {
       }
     });
 
-    return () => unsubscribe(); // Cleanup the subscription
+    // Request permission for notifications
+    requestNotificationPermission();
+
+    // Handle foreground messages
+    const unsubscribeOnMessage = onMessage(messaging, (payload) => {
+      console.log("Foreground message received:", payload);
+      const { title, body } = payload.notification;
+      new Notification(title, { body });
+    });
+
+    return () => {
+      unsubscribe();
+      unsubscribeOnMessage();
+    };
   }, []);
 
   return (
@@ -38,10 +57,14 @@ const App = () => {
           <Route path="/goals" element={<Goals userId={userId} />} />
           <Route path="/budgets" element={<Budgets userId={userId} />} />
           <Route path="/profile" element={<UserProfile userId={userId} />} />
-          <Route path="/resources" element={<EducationalResources userId={userId} />} />
+          <Route
+            path="/resources"
+            element={<EducationalResources userId={userId} />}
+          />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
         </Routes>
+        <Chatbot />
       </div>
     </Router>
   );

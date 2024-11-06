@@ -87,3 +87,4 @@ export const deleteGoal = async (userId, goalId) => {
   const goalRef = doc(db, "users", userId, "goals", goalId);
   return await deleteDoc(goalRef);
 };
+
