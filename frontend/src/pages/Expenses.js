@@ -31,6 +31,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MuiAlert from "@mui/material/Alert";
+import SortButton from "../components/SortButton";
 import { useNavigate } from "react-router-dom";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -48,6 +49,7 @@ const Expenses = ({ userId }) => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [sortOrder, setSortOrder] = useState("asc");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -108,6 +110,26 @@ const Expenses = ({ userId }) => {
   };
   const handleUpdateDialogClose = () => setUpdateDialogOpen(false);
   const handleSnackbarClose = () => setSnackbarOpen(false);
+
+  // Function to sort expenses by category
+  const sortExpenses = (order) => {
+    const sortedExpenses = [...expenses].sort((a, b) => {
+      if (order === "asc") {
+        return a.category.localeCompare(b.category);
+      } else {
+        return b.category.localeCompare(a.category);
+      }
+    });
+    return sortedExpenses;
+  };
+
+  // Sort expenses based on the current order
+  const sortedExpenses = sortExpenses(sortOrder);
+
+  // Toggle sorting order
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
 
   const isNewExpenseCategoryValid =
     newExpense.category !== "" && newExpense.category !== null;
@@ -338,7 +360,7 @@ const Expenses = ({ userId }) => {
                     backgroundColor: isLightMode
                       ? "none"
                       : theme.palette.grey[300],
-                    color: theme.palette.grey[500], 
+                    color: theme.palette.grey[500],
                   },
                 }}
                 disabled={isNewExpenseBtnDisable}
@@ -526,7 +548,7 @@ const Expenses = ({ userId }) => {
                     backgroundColor: isLightMode
                       ? "none"
                       : theme.palette.grey[300],
-                    color: theme.palette.grey[500], 
+                    color: theme.palette.grey[500],
                   },
                 }}
                 disabled={isSelectedExpenseBtnDisable}
@@ -560,8 +582,15 @@ const Expenses = ({ userId }) => {
         <Typography variant="h4" gutterBottom>
           Your Expenses
         </Typography>
+        <SortButton
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
+          theme={theme}
+          isLightMode={isLightMode}
+        />
+        <div style={{ marginTop: "1rem" }}></div>
         <Grid2 container spacing={3}>
-          {expenses.map((expense, index) => (
+          {sortedExpenses.map((expense, index) => (
             <Grid2 item xs={12} sm={6} md={4} key={expense.id}>
               <Grow in={true} timeout={index * 500}>
                 <Card

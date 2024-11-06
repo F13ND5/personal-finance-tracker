@@ -31,6 +31,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MuiAlert from "@mui/material/Alert";
+import SortButton from "../components/SortButton";
 import { useNavigate } from "react-router-dom";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -48,6 +49,7 @@ const Budgets = ({ userId }) => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [sortOrder, setSortOrder] = useState("asc");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -108,6 +110,26 @@ const Budgets = ({ userId }) => {
   };
   const handleUpdateDialogClose = () => setUpdateDialogOpen(false);
   const handleSnackbarClose = () => setSnackbarOpen(false);
+
+  // Function to sort budgets by category
+  const sortBudgets = (order) => {
+    const sortedBudgets = [...budgets].sort((a, b) => {
+      if (order === "asc") {
+        return a.category.localeCompare(b.category);
+      } else {
+        return b.category.localeCompare(a.category);
+      }
+    });
+    return sortedBudgets;
+  };
+
+  // Sort budgets based on the current order
+  const sortedBudgets = sortBudgets(sortOrder);
+
+  // Toggle sorting order
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
 
   const isNewBudgetCategoryValid =
     newBudget.category !== "" && newBudget.category !== null;
@@ -338,7 +360,7 @@ const Budgets = ({ userId }) => {
                     backgroundColor: isLightMode
                       ? "none"
                       : theme.palette.grey[300],
-                    color: theme.palette.grey[500], 
+                    color: theme.palette.grey[500],
                   },
                 }}
                 disabled={isNewBudgetBtnDisable}
@@ -526,7 +548,7 @@ const Budgets = ({ userId }) => {
                     backgroundColor: isLightMode
                       ? "none"
                       : theme.palette.grey[300],
-                    color: theme.palette.grey[500], 
+                    color: theme.palette.grey[500],
                   },
                 }}
                 disabled={isSelectedBudgetBtnDisable}
@@ -560,8 +582,15 @@ const Budgets = ({ userId }) => {
         <Typography variant="h4" gutterBottom>
           Your Budgets
         </Typography>
+        <SortButton
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
+          theme={theme}
+          isLightMode={isLightMode}
+        />
+        <div style={{ marginTop: "1rem" }}></div>
         <Grid2 container spacing={3}>
-          {budgets.map((budget, index) => (
+          {sortedBudgets.map((budget, index) => (
             <Grid2 item xs={12} sm={6} md={4} key={budget.id}>
               <Grow in={true} timeout={index * 500}>
                 <Card
@@ -691,13 +720,17 @@ const Budgets = ({ userId }) => {
                         style={{
                           padding: 8,
                           borderRadius: "50%",
-                          backgroundColor: isLightMode ? "#ffebee" : theme.palette.error.dark,
+                          backgroundColor: isLightMode
+                            ? "#ffebee"
+                            : theme.palette.error.dark,
                           transition: "all 0.3s ease",
                           boxShadow: "0px 4px 10px rgba(244, 67, 54, 0.3)",
                         }}
                         sx={{
                           "&:hover": {
-                            backgroundColor: isLightMode ? "#ffcdd2" : theme.palette.error.light,
+                            backgroundColor: isLightMode
+                              ? "#ffcdd2"
+                              : theme.palette.error.light,
                             transform: "scale(1.1)",
                             boxShadow: "0px 6px 15px rgba(244, 67, 54, 0.5)",
                           },

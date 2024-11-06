@@ -34,6 +34,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import MuiAlert from "@mui/material/Alert";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import SortButton from "../components/SortButton";
 import { useNavigate } from "react-router-dom";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -55,6 +56,7 @@ const Goals = ({ userId }) => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [sortOrder, setSortOrder] = useState("asc");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -123,6 +125,26 @@ const Goals = ({ userId }) => {
   };
   const handleUpdateDialogClose = () => setUpdateDialogOpen(false);
   const handleSnackbarClose = () => setSnackbarOpen(false);
+
+  // Function to sort goals by category
+  const sortGoals = (order) => {
+    const sortedGoals = [...goals].sort((a, b) => {
+      if (order === "asc") {
+        return a.category.localeCompare(b.category);
+      } else {
+        return b.category.localeCompare(a.category);
+      }
+    });
+    return sortedGoals;
+  };
+
+  // Sort goals based on the current order
+  const sortedGoals = sortGoals(sortOrder);
+
+  // Toggle sorting order
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
 
   const isNewGoalTitleValid = newGoal.title !== "" && newGoal.title !== null;
   const isNewGoalTargetValid = newGoal.target !== "" && newGoal.target !== null;
@@ -350,7 +372,7 @@ const Goals = ({ userId }) => {
                     backgroundColor: isLightMode
                       ? "none"
                       : theme.palette.grey[300],
-                    color: theme.palette.grey[500], 
+                    color: theme.palette.grey[500],
                   },
                 }}
                 disabled={isNewGoalBtnDisable}
@@ -538,7 +560,7 @@ const Goals = ({ userId }) => {
                     backgroundColor: isLightMode
                       ? "none"
                       : theme.palette.grey[300],
-                    color: theme.palette.grey[500], 
+                    color: theme.palette.grey[500],
                   },
                 }}
                 disabled={isSelectedGoalBtnDisable}
@@ -572,8 +594,15 @@ const Goals = ({ userId }) => {
         <Typography variant="h4" gutterBottom>
           Your Goals
         </Typography>
+        <SortButton
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
+          theme={theme}
+          isLightMode={isLightMode}
+        />
+        <div style={{ marginTop: "1rem" }}></div>
         <Grid2 container spacing={3}>
-          {goals.map((goal, index) => (
+          {sortedGoals.map((goal, index) => (
             <Grid2 item xs={12} sm={6} md={4} key={goal.id}>
               <Grow in={true} timeout={index * 500}>
                 <Card
