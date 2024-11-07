@@ -204,7 +204,10 @@ const Goals = ({ userId }) => {
 
       <Dialog
         open={addDialogOpen}
-        onClose={handleAddDialogClose}
+        onClose={() => {
+          handleAddDialogClose();
+          setNewGoal({ title: "", target: "" }); // Reset form on close
+        }}
         PaperProps={{
           style: {
             borderRadius: "12px",
@@ -221,10 +224,10 @@ const Goals = ({ userId }) => {
           <Paper
             style={{
               padding: "40px",
-              backgroundColor: isLightMode ? "#f9f9f9" : "#424242", // Light gray for light mode, dark gray for dark mode
+              backgroundColor: isLightMode ? "#f9f9f9" : "#333",
               borderRadius: "12px",
-              color: isLightMode ? "#424242" : "#E0E0E0", // Text color for readability
-              transition: "all 0.3s ease", // Smooth transition for theme switching
+              color: isLightMode ? "#424242" : "#E0E0E0",
+              transition: "all 0.3s ease",
               boxShadow: isLightMode
                 ? "0px 4px 8px rgba(0, 0, 0, 0.1)" // Light shadow for light mode
                 : "0px 4px 12px rgba(0, 0, 0, 0.3)", // Darker, deeper shadow for dark mode
@@ -236,7 +239,7 @@ const Goals = ({ userId }) => {
                 textAlign: "center",
                 fontSize: "1.75rem",
                 fontWeight: 600,
-                color: "#3f51b5",
+                color: isLightMode ? "#3f51b5" : "#bb86fc",
               }}
             >
               Add New Goal
@@ -248,8 +251,11 @@ const Goals = ({ userId }) => {
                   display: "flex",
                   flexDirection: "column",
                   gap: "15px",
+                  padding: "15px",
+                  borderRadius: "8px",
                 }}
               >
+                {/* Goal Title Field */}
                 <TextField
                   label="Goal Title"
                   placeholder="Enter your goal title"
@@ -260,14 +266,11 @@ const Goals = ({ userId }) => {
                   required
                   fullWidth
                   variant="outlined"
-                  autoFocus
                   InputProps={{
                     style: {
                       backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
                       padding: "10px",
-                      transition:
-                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
                       color: isLightMode ? "#000000" : "#F5F5F5",
                     },
                   }}
@@ -277,17 +280,20 @@ const Goals = ({ userId }) => {
                         borderColor: isLightMode ? "#ccc" : "#888",
                       },
                       "&:hover fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
                       },
-                      "&:focus-within fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
-                        boxShadow: isLightMode
-                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
-                          : "0 0 5px rgba(187, 134, 252, 0.5)",
-                      }, // Focus effect
+                      "&.Mui-focused fieldset": {
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
+                      },
                     },
                   }}
                 />
+
+                {/* Target Amount Field */}
                 <TextField
                   label="Target Amount"
                   placeholder="Enter target amount"
@@ -304,8 +310,6 @@ const Goals = ({ userId }) => {
                       backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
                       padding: "10px",
-                      transition:
-                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
                       color: isLightMode ? "#000000" : "#F5F5F5",
                     },
                   }}
@@ -315,14 +319,15 @@ const Goals = ({ userId }) => {
                         borderColor: isLightMode ? "#ccc" : "#888",
                       },
                       "&:hover fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
                       },
-                      "&:focus-within fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
-                        boxShadow: isLightMode
-                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
-                          : "0 0 5px rgba(187, 134, 252, 0.5)",
-                      }, // Focus effect
+                      "&.Mui-focused fieldset": {
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
+                      },
                     },
                   }}
                 />
@@ -362,10 +367,10 @@ const Goals = ({ userId }) => {
                   borderRadius: "8px",
                   fontWeight: 600,
                   transition: "background-color 0.3s ease, transform 0.2s ease",
-                  backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32", // Green shades for light and dark mode
+                  backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32",
                   color: isLightMode ? "#ffffff" : "#E0E0E0", // Text color for readability
                   "&:hover": {
-                    backgroundColor: isLightMode ? "#388E3C" : "#1B5E20", // Slightly darker on hover
+                    backgroundColor: isLightMode ? "#388E3C" : "#1B5E20",
                     transform: "scale(1.05)",
                   },
                   "&.Mui-disabled": {
@@ -403,10 +408,10 @@ const Goals = ({ userId }) => {
           <Paper
             style={{
               padding: "40px",
-              backgroundColor: isLightMode ? "#f9f9f9" : "#424242", // Light gray for light mode, dark gray for dark mode
+              backgroundColor: isLightMode ? "#f9f9f9" : "#333",
               borderRadius: "12px",
-              color: isLightMode ? "#424242" : "#E0E0E0", // Text color for readability
-              transition: "all 0.3s ease", // Smooth transition for theme switching
+              color: isLightMode ? "#424242" : "#E0E0E0",
+              transition: "all 0.3s ease",
               boxShadow: isLightMode
                 ? "0px 4px 8px rgba(0, 0, 0, 0.1)" // Light shadow for light mode
                 : "0px 4px 12px rgba(0, 0, 0, 0.3)", // Darker, deeper shadow for dark mode
@@ -418,7 +423,7 @@ const Goals = ({ userId }) => {
                 textAlign: "center",
                 fontSize: "1.75rem",
                 fontWeight: 600,
-                color: "#3f51b5",
+                color: isLightMode ? "#3f51b5" : "#bb86fc",
               }}
             >
               Update Goal
@@ -430,8 +435,12 @@ const Goals = ({ userId }) => {
                   display: "flex",
                   flexDirection: "column",
                   gap: "15px",
+                  padding: "15px",
+                  borderRadius: "8px",
                 }}
               >
+
+                {/* Goal Title Field */}
                 <TextField
                   label="Goal Title"
                   placeholder="Enter your goal title"
@@ -445,14 +454,11 @@ const Goals = ({ userId }) => {
                   required
                   fullWidth
                   variant="outlined"
-                  autoFocus
                   InputProps={{
                     style: {
                       backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
                       padding: "10px",
-                      transition:
-                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
                       color: isLightMode ? "#000000" : "#F5F5F5",
                     },
                   }}
@@ -462,17 +468,20 @@ const Goals = ({ userId }) => {
                         borderColor: isLightMode ? "#ccc" : "#888",
                       },
                       "&:hover fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
                       },
-                      "&:focus-within fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
-                        boxShadow: isLightMode
-                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
-                          : "0 0 5px rgba(187, 134, 252, 0.5)",
-                      }, // Focus effect
+                      "&.Mui-focused fieldset": {
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
+                      },
                     },
                   }}
                 />
+
+                {/* Target Amount Field */}
                 <TextField
                   label="Target Amount"
                   placeholder="Enter target amount"
@@ -492,8 +501,6 @@ const Goals = ({ userId }) => {
                       backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
                       padding: "10px",
-                      transition:
-                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
                       color: isLightMode ? "#000000" : "#F5F5F5",
                     },
                   }}
@@ -503,14 +510,15 @@ const Goals = ({ userId }) => {
                         borderColor: isLightMode ? "#ccc" : "#888",
                       },
                       "&:hover fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
                       },
-                      "&:focus-within fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
-                        boxShadow: isLightMode
-                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
-                          : "0 0 5px rgba(187, 134, 252, 0.5)",
-                      }, // Focus effect
+                      "&.Mui-focused fieldset": {
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
+                      },
                     },
                   }}
                 />
@@ -550,10 +558,10 @@ const Goals = ({ userId }) => {
                   borderRadius: "8px",
                   fontWeight: 600,
                   transition: "background-color 0.3s ease, transform 0.2s ease",
-                  backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32", // Green shades for light and dark mode
+                  backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32",
                   color: isLightMode ? "#ffffff" : "#E0E0E0", // Text color for readability
                   "&:hover": {
-                    backgroundColor: isLightMode ? "#388E3C" : "#1B5E20", // Slightly darker on hover
+                    backgroundColor: isLightMode ? "#388E3C" : "#1B5E20",
                     transform: "scale(1.05)",
                   },
                   "&.Mui-disabled": {
@@ -701,7 +709,7 @@ const Goals = ({ userId }) => {
                             : theme.palette.background.paper,
                           transition: "all 0.3s ease",
                           boxShadow: goal.isAchieved
-                            ? `0px 4px 12px ${theme.palette.success.main}66`
+                            ? `0px 4px 12px ${theme.palette.success.main}1066`
                             : `0px 4px 8px ${theme.palette.grey[400]}`,
                           display: "flex",
                           alignItems: "center",

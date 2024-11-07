@@ -25,6 +25,10 @@ import {
   Tooltip,
   Fade,
   Grow,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import AddIcon from "@mui/icons-material/Add";
@@ -32,6 +36,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MuiAlert from "@mui/material/Alert";
 import SortButton from "../components/SortButton";
+import FoodBankIcon from "@mui/icons-material/FoodBank";
+import HomeIcon from "@mui/icons-material/Home";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import TheatersIcon from "@mui/icons-material/Theaters";
 import { useNavigate } from "react-router-dom";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -68,6 +76,9 @@ const Budgets = ({ userId }) => {
       fetchBudgets();
     }
   }, [userId, navigate]);
+
+  // Allowed categories for budgets
+  const budgetCategories = ["Rent", "Food", "Transport", "Entertainment"];
 
   const handleAddBudget = async (e) => {
     e.preventDefault();
@@ -192,14 +203,17 @@ const Budgets = ({ userId }) => {
 
       <Dialog
         open={addDialogOpen}
-        onClose={handleAddDialogClose}
+        onClose={() => {
+          handleAddDialogClose();
+          setNewBudget({ category: "", amount: "" }); // Reset form on close
+        }}
         PaperProps={{
           style: {
             borderRadius: "12px",
             boxShadow: isLightMode
-              ? "0px 8px 30px rgba(0, 0, 0, 0.2)" // Subtle shadow for light mode
-              : "0px 8px 30px rgba(0, 0, 0, 0.5)", // Stronger shadow for dark mode
-            backgroundColor: isLightMode ? "#fff" : "#333", // Adjust background for dark mode
+              ? "0px 8px 30px rgba(0, 0, 0, 0.2)"
+              : "0px 8px 30px rgba(0, 0, 0, 0.5)",
+            backgroundColor: isLightMode ? "#fff" : "#333",
           },
         }}
         fullWidth
@@ -209,10 +223,10 @@ const Budgets = ({ userId }) => {
           <Paper
             style={{
               padding: "40px",
-              backgroundColor: isLightMode ? "#f9f9f9" : "#424242", // Light gray for light mode, dark gray for dark mode
+              backgroundColor: isLightMode ? "#f9f9f9" : "#333",
               borderRadius: "12px",
-              color: isLightMode ? "#424242" : "#E0E0E0", // Text color for readability
-              transition: "all 0.3s ease", // Smooth transition for theme switching
+              color: isLightMode ? "#424242" : "#E0E0E0",
+              transition: "all 0.3s ease",
               boxShadow: isLightMode
                 ? "0px 4px 8px rgba(0, 0, 0, 0.1)" // Light shadow for light mode
                 : "0px 4px 12px rgba(0, 0, 0, 0.3)", // Darker, deeper shadow for dark mode
@@ -224,11 +238,12 @@ const Budgets = ({ userId }) => {
                 textAlign: "center",
                 fontSize: "1.75rem",
                 fontWeight: 600,
-                color: "#3f51b5",
+                color: isLightMode ? "#3f51b5" : "#bb86fc",
               }}
             >
               Add New Budget
             </DialogTitle>
+
             <DialogContent>
               <form
                 onSubmit={handleAddBudget}
@@ -236,51 +251,84 @@ const Budgets = ({ userId }) => {
                   display: "flex",
                   flexDirection: "column",
                   gap: "15px",
+                  padding: "15px",
+                  borderRadius: "8px",
                 }}
               >
-                <TextField
-                  label="Budget Category"
-                  placeholder="Enter your budget category"
-                  value={newBudget.category}
-                  onChange={(e) =>
-                    setNewBudget({ ...newBudget, category: e.target.value })
-                  }
-                  required
-                  fullWidth
-                  variant="outlined"
-                  autoFocus
-                  InputProps={{
-                    style: {
+                {/* Category Select Dropdown */}
+                <FormControl fullWidth variant="outlined" required>
+                  <InputLabel>Expense Category</InputLabel>
+                  <Select
+                    value={newBudget.category || ""}
+                    onChange={(e) =>
+                      setNewBudget({ ...newBudget, category: e.target.value })
+                    }
+                    label="Expense Category"
+                    style={{
                       backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
-                      padding: "10px",
-                      transition:
-                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
-                      color: isLightMode ? "#000000" : "#F5F5F5",
-                    },
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: isLightMode ? "#ccc" : "#888",
+                      transition: "box-shadow 0.3s, background-color 0.3s",
+                    }}
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: isLightMode
+                          ? "#f1f8ff"
+                          : theme.palette.action.hover,
                       },
-                      "&:hover fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
                       },
-                      "&:focus-within fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
-                        boxShadow: isLightMode
-                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
-                          : "0 0 5px rgba(187, 134, 252, 0.5)",
-                      }, // Focus effect
-                    },
-                  }}
-                />
+                    }}
+                  >
+                    {budgetCategories.map((category) => (
+                      <MenuItem key={category} value={category}>
+                        {/* Icon for each category */}
+                        {category === "Rent" && (
+                          <HomeIcon
+                            style={{
+                              marginRight: "8px",
+                              color: theme.palette.primary.main,
+                            }}
+                          />
+                        )}
+                        {category === "Food" && (
+                          <FoodBankIcon
+                            style={{
+                              marginRight: "8px",
+                              color: theme.palette.primary.main,
+                            }}
+                          />
+                        )}
+                        {category === "Transport" && (
+                          <DirectionsCarIcon
+                            style={{
+                              marginRight: "8px",
+                              color: theme.palette.primary.main,
+                            }}
+                          />
+                        )}
+                        {category === "Entertainment" && (
+                          <TheatersIcon
+                            style={{
+                              marginRight: "8px",
+                              color: theme.palette.primary.main,
+                            }}
+                          />
+                        )}
+                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                {/* Budget Amount Field */}
                 <TextField
                   label="Budget Amount"
                   placeholder="Enter budget amount"
                   type="number"
-                  value={newBudget.amount}
+                  value={newBudget.amount || ""}
                   onChange={(e) =>
                     setNewBudget({ ...newBudget, amount: e.target.value })
                   }
@@ -292,8 +340,6 @@ const Budgets = ({ userId }) => {
                       backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
                       padding: "10px",
-                      transition:
-                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
                       color: isLightMode ? "#000000" : "#F5F5F5",
                     },
                   }}
@@ -303,19 +349,21 @@ const Budgets = ({ userId }) => {
                         borderColor: isLightMode ? "#ccc" : "#888",
                       },
                       "&:hover fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
                       },
-                      "&:focus-within fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
-                        boxShadow: isLightMode
-                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
-                          : "0 0 5px rgba(187, 134, 252, 0.5)",
-                      }, // Focus effect
+                      "&.Mui-focused fieldset": {
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
+                      },
                     },
                   }}
                 />
               </form>
             </DialogContent>
+
             <DialogActions
               style={{ justifyContent: "space-between", paddingTop: "20px" }}
             >
@@ -350,10 +398,10 @@ const Budgets = ({ userId }) => {
                   borderRadius: "8px",
                   fontWeight: 600,
                   transition: "background-color 0.3s ease, transform 0.2s ease",
-                  backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32", // Green shades for light and dark mode
+                  backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32",
                   color: isLightMode ? "#ffffff" : "#E0E0E0", // Text color for readability
                   "&:hover": {
-                    backgroundColor: isLightMode ? "#388E3C" : "#1B5E20", // Slightly darker on hover
+                    backgroundColor: isLightMode ? "#388E3C" : "#1B5E20",
                     transform: "scale(1.05)",
                   },
                   "&.Mui-disabled": {
@@ -379,9 +427,9 @@ const Budgets = ({ userId }) => {
           style: {
             borderRadius: "12px",
             boxShadow: isLightMode
-              ? "0px 8px 30px rgba(0, 0, 0, 0.2)" // Subtle shadow for light mode
-              : "0px 8px 30px rgba(0, 0, 0, 0.5)", // Stronger shadow for dark mode
-            backgroundColor: isLightMode ? "#fff" : "#333", // Adjust background for dark mode
+              ? "0px 8px 30px rgba(0, 0, 0, 0.2)"
+              : "0px 8px 30px rgba(0, 0, 0, 0.5)",
+            backgroundColor: isLightMode ? "#fff" : "#333",
           },
         }}
         fullWidth
@@ -391,10 +439,10 @@ const Budgets = ({ userId }) => {
           <Paper
             style={{
               padding: "40px",
-              backgroundColor: isLightMode ? "#f9f9f9" : "#424242", // Light gray for light mode, dark gray for dark mode
+              backgroundColor: isLightMode ? "#f9f9f9" : "#333",
               borderRadius: "12px",
-              color: isLightMode ? "#424242" : "#E0E0E0", // Text color for readability
-              transition: "all 0.3s ease", // Smooth transition for theme switching
+              color: isLightMode ? "#424242" : "#E0E0E0",
+              transition: "all 0.3s ease",
               boxShadow: isLightMode
                 ? "0px 4px 8px rgba(0, 0, 0, 0.1)" // Light shadow for light mode
                 : "0px 4px 12px rgba(0, 0, 0, 0.3)", // Darker, deeper shadow for dark mode
@@ -406,7 +454,7 @@ const Budgets = ({ userId }) => {
                 textAlign: "center",
                 fontSize: "1.75rem",
                 fontWeight: 600,
-                color: "#3f51b5",
+                color: isLightMode ? "#3f51b5" : "#bb86fc",
               }}
             >
               Update Budget
@@ -418,52 +466,85 @@ const Budgets = ({ userId }) => {
                   display: "flex",
                   flexDirection: "column",
                   gap: "15px",
+                  padding: "15px",
+                  borderRadius: "8px",
                 }}
               >
-                <TextField
-                  label="Budget Category"
-                  placeholder="Enter your budget category"
-                  value={selectedBudget?.category || ""}
-                  onChange={(e) =>
-                    setSelectedBudget({
-                      ...selectedBudget,
-                      category: e.target.value,
-                    })
-                  }
-                  required
-                  fullWidth
-                  variant="outlined"
-                  autoFocus
-                  InputProps={{
-                    style: {
+                {/* Category Select Dropdown */}
+                <FormControl fullWidth variant="outlined" required>
+                  <InputLabel>Budget Category</InputLabel>
+                  <Select
+                    value={selectedBudget?.category || ""}
+                    onChange={(e) =>
+                      setSelectedBudget({
+                        ...selectedBudget,
+                        category: e.target.value,
+                      })
+                    }
+                    label="Budget Category"
+                    style={{
                       backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
-                      padding: "10px",
-                      transition:
-                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
-                      color: isLightMode ? "#000000" : "#F5F5F5",
-                    },
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: isLightMode ? "#ccc" : "#888",
+                      transition: "box-shadow 0.3s, background-color 0.3s",
+                    }}
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: isLightMode
+                          ? "#f1f8ff"
+                          : theme.palette.action.hover,
                       },
-                      "&:hover fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
                       },
-                      "&:focus-within fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
-                        boxShadow: isLightMode
-                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
-                          : "0 0 5px rgba(187, 134, 252, 0.5)",
-                      }, // Focus effect
-                    },
-                  }}
-                />
+                    }}
+                  >
+                    {budgetCategories.map((category) => (
+                      <MenuItem key={category} value={category}>
+                        {/* Icon for each category */}
+                        {category === "Rent" && (
+                          <HomeIcon
+                            style={{
+                              marginRight: "8px",
+                              color: theme.palette.primary.main,
+                            }}
+                          />
+                        )}
+                        {category === "Food" && (
+                          <FoodBankIcon
+                            style={{
+                              marginRight: "8px",
+                              color: theme.palette.primary.main,
+                            }}
+                          />
+                        )}
+                        {category === "Transport" && (
+                          <DirectionsCarIcon
+                            style={{
+                              marginRight: "8px",
+                              color: theme.palette.primary.main,
+                            }}
+                          />
+                        )}
+                        {category === "Entertainment" && (
+                          <TheatersIcon
+                            style={{
+                              marginRight: "8px",
+                              color: theme.palette.primary.main,
+                            }}
+                          />
+                        )}
+                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                {/* Budget Amount Field */}
                 <TextField
                   label="Budget Amount"
-                  placeholder="Enter Budget amount"
+                  placeholder="Enter budget amount"
                   type="number"
                   value={selectedBudget?.amount || ""}
                   onChange={(e) =>
@@ -480,8 +561,6 @@ const Budgets = ({ userId }) => {
                       backgroundColor: isLightMode ? "#ffffff" : "#424242",
                       borderRadius: "8px",
                       padding: "10px",
-                      transition:
-                        "border-color 0.3s ease, box-shadow 0.3s ease", // Input transitions
                       color: isLightMode ? "#000000" : "#F5F5F5",
                     },
                   }}
@@ -491,14 +570,15 @@ const Budgets = ({ userId }) => {
                         borderColor: isLightMode ? "#ccc" : "#888",
                       },
                       "&:hover fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
                       },
-                      "&:focus-within fieldset": {
-                        borderColor: isLightMode ? "#3f51b5" : "#bb86fc",
-                        boxShadow: isLightMode
-                          ? "0 0 5px rgba(63, 81, 181, 0.5)"
-                          : "0 0 5px rgba(187, 134, 252, 0.5)",
-                      }, // Focus effect
+                      "&.Mui-focused fieldset": {
+                        borderColor: isLightMode
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
+                      },
                     },
                   }}
                 />
@@ -538,10 +618,10 @@ const Budgets = ({ userId }) => {
                   borderRadius: "8px",
                   fontWeight: 600,
                   transition: "background-color 0.3s ease, transform 0.2s ease",
-                  backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32", // Green shades for light and dark mode
+                  backgroundColor: isLightMode ? "#4CAF50" : "#2E7D32",
                   color: isLightMode ? "#ffffff" : "#E0E0E0", // Text color for readability
                   "&:hover": {
-                    backgroundColor: isLightMode ? "#388E3C" : "#1B5E20", // Slightly darker on hover
+                    backgroundColor: isLightMode ? "#388E3C" : "#1B5E20",
                     transform: "scale(1.05)",
                   },
                   "&.Mui-disabled": {
