@@ -28,14 +28,36 @@ const Chatbot = () => {
     let response = "";
     switch (message) {
       case "go to dashboard":
-        response = "Navigating to the dashboard...";
+        response = "Navigating to the Dashboard...";
         navigate("/");
         break;
-      // Additional case statements as needed
+      case "go to expenses":
+        response = "Navigating to the Expenses...";
+        navigate("/expenses");
+        break;
+      case "go to goals":
+        response = "Navigating to the Goals...";
+        navigate("/goals");
+        break;
+      case "go to budgets":
+        response = "Navigating to the Budgets...";
+        navigate("/budgets");
+        break;
+      case "go to profile":
+        response = "Navigating to the Profile...";
+        navigate("/profile");
+        break;
+      case "go to resources":
+        response = "Navigating to the Resources...";
+        navigate("/resources");
+        break;
       default:
         response = "I'm here to help! Try selecting a command button below.";
     }
-    setMessages((prevMessages) => [...prevMessages, { text: response, isUser: false }]);
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { text: response, isUser: false },
+    ]);
   };
 
   const handleCommandClick = (command) => {
@@ -64,7 +86,9 @@ const Chatbot = () => {
               position: "fixed",
               bottom: "20px",
               right: "20px",
-              backgroundColor: isLightMode ? theme.palette.primary.main : theme.palette.primary.dark,
+              backgroundColor: isLightMode
+                ? theme.palette.primary.main
+                : theme.palette.primary.dark,
               color: "white",
               boxShadow: "0px 4px 8px rgba(0,0,0,0.3)",
               transition: "transform 0.3s",
@@ -91,7 +115,9 @@ const Chatbot = () => {
         >
           <div
             style={{
-              backgroundColor: isLightMode ? theme.palette.primary.main : theme.palette.primary.dark,
+              backgroundColor: isLightMode
+                ? theme.palette.primary.main
+                : theme.palette.primary.dark,
               color: "white",
               padding: "10px",
               textAlign: "center",
@@ -102,7 +128,12 @@ const Chatbot = () => {
             Chatbot Assistant
             <IconButton
               onClick={toggleChatbot}
-              style={{ position: "absolute", top: "5px", right: "5px", color: "white" }}
+              style={{
+                position: "absolute",
+                top: "5px",
+                right: "5px",
+                color: "white",
+              }}
               size="small"
             >
               <CloseIcon />
@@ -118,7 +149,10 @@ const Chatbot = () => {
             }}
           >
             {messages.map((msg, index) => (
-              <div key={index} style={{ textAlign: msg.isUser ? "right" : "left" }}>
+              <div
+                key={index}
+                style={{ textAlign: msg.isUser ? "right" : "left" }}
+              >
                 <p
                   style={{
                     padding: "8px",
@@ -142,14 +176,31 @@ const Chatbot = () => {
             ))}
             <div ref={messagesEndRef} />
           </div>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: "5px", justifyContent: "center", padding: "10px" }}>
-            {["Dashboard", "Expenses", "Goals", "Budgets", "Profile", "Resources"].map((label) => (
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "5px",
+              justifyContent: "center",
+              padding: "10px",
+            }}
+          >
+            {[
+              "Dashboard",
+              "Expenses",
+              "Goals",
+              "Budgets",
+              "Profile",
+              "Resources",
+            ].map((label) => (
               <Button
                 key={label}
                 variant="contained"
                 onClick={() => handleCommandClick(`Go to ${label}`)}
                 sx={{
-                  backgroundColor: isLightMode ? theme.palette.primary.main : theme.palette.primary.dark,
+                  backgroundColor: isLightMode
+                    ? theme.palette.primary.main
+                    : theme.palette.primary.dark,
                   color: "white",
                   "&:hover": { transform: "scale(1.05)" },
                 }}
@@ -187,7 +238,9 @@ const Chatbot = () => {
             <IconButton
               onClick={handleSend}
               style={{
-                color: isLightMode ? theme.palette.primary.main : theme.palette.primary.dark,
+                color: isLightMode
+                  ? theme.palette.primary.main
+                  : theme.palette.primary.dark,
               }}
             >
               <SendIcon />
