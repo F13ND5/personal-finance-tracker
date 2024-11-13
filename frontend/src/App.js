@@ -18,6 +18,7 @@ import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import EducationalResources from "./pages/EducationalResources";
 import Chatbot from "./components/Chatbot";
+import Calculators from "./components/Calculators.js";
 
 const App = () => {
   const [userId, setUserId] = useState(null);
@@ -57,6 +58,7 @@ const App = () => {
           <Route path="/goals" element={<Goals userId={userId} />} />
           <Route path="/budgets" element={<Budgets userId={userId} />} />
           <Route path="/profile" element={<UserProfile userId={userId} />} />
+          <Route path="/calculator" element={<Calculators />} />
           <Route
             path="/resources"
             element={<EducationalResources userId={userId} />}

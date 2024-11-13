@@ -24,6 +24,8 @@ import ClearIcon from "@mui/icons-material/Clear";
 import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import { useNavigate } from "react-router-dom";
 
+import CalculateIcon from "@mui/icons-material/Calculate";
+
 const EducationalResources = ({ userId }) => {
   const theme = useTheme();
   const isLightMode = theme.palette.mode === "light";
@@ -77,6 +79,10 @@ const EducationalResources = ({ userId }) => {
   const filteredVideos = videos.filter((video) =>
     video.snippet.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const redirectToCalculator = (event) => {
+    navigate('/calculator');
+  };
 
   if (loading) {
     return (
@@ -224,6 +230,41 @@ const EducationalResources = ({ userId }) => {
               Videos
             </ToggleButton>
           </ToggleButtonGroup>
+        </Box>
+        <Box sx={{ flex: "2 1 auto", display: "flex" }}>
+          <IconButton
+            color="primary"
+            onClick={redirectToCalculator}
+            style={{
+              backgroundColor: isLightMode
+                ? "#4CAF50"
+                : theme.palette.background.default,
+              transition: "all 0.3s ease",
+              boxShadow: isLightMode
+                ? "0px 4px 10px rgba(33, 150, 243, 0.3)"
+                : `0px 4px 10px ${theme.palette.primary.main}80`,
+            }}
+            sx={{
+              "&:hover": {
+                backgroundColor: isLightMode
+                  ? "#bbdefb"
+                  : theme.palette.primary.light,
+                transform: "scale(1.1)",
+                boxShadow: isLightMode
+                  ? "0px 6px 15px rgba(33, 150, 243, 0.5)"
+                  : `0px 6px 15px ${theme.palette.primary.main}120`,
+              },
+            }}
+          >
+            <CalculateIcon
+              fontSize="large"
+              style={{
+                color: isLightMode
+                  ? theme.palette.common.white
+                  : theme.palette.success.light,
+              }}
+            />
+          </IconButton>
         </Box>
       </Box>
 

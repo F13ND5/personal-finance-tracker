@@ -167,10 +167,6 @@ const Expenses = ({ userId }) => {
           position: "fixed",
           top: "100px",
           right: "20px",
-          /*backgroundColor: isLightMode ? "#4CAF50" : theme.palette.success.main,
-          color: theme.palette.getContrastText(
-            isLightMode ? "#fff" : theme.palette.success.main
-          ),*/
           backgroundColor: isLightMode
             ? "#4CAF50"
             : theme.palette.background.default,
